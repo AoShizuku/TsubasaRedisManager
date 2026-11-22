@@ -1,0 +1,120 @@
+/* ============================================================
+   Tsubasa Redis Manager — 设计令牌 (v0.1 / 浅色)
+   源自 doc/fe_ref/assets/tokens.css。深色主题不在 v0.1 范围内，
+   但所有颜色都走变量，加主题时只需覆盖 :root。
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* ── 表面 ──────────────────────────────────────────────── */
+  --bg-app: #ffffff;        /* 内容区底色 */
+  --bg-chrome: #f6f6f8;     /* 标题栏 / 标签栏 / 状态栏 */
+  --bg-sidebar: #f8f8fa;    /* 左侧 Key Explorer */
+  --bg-subtle: #fbfbfc;     /* 工具条 / 表头 */
+  --bg-inset: #f2f2f5;      /* 分段控件槽、代码块底 */
+  --bg-hover: #f0f0f3;
+  --bg-active: #e6e6ea;
+  --bg-sel: #e9f0fd;        /* 选中行 */
+  --bg-sel-strong: #dbe7fb;
+
+  /* ── 线条 ──────────────────────────────────────────────── */
+  --bd: #e6e6ea;            /* 默认细线，禁止使用粗边框 */
+  --bd-strong: #d8d8de;
+  --bd-input: #d4d4dc;
+
+  /* ── 文字 ──────────────────────────────────────────────── */
+  --fg: #17171b;
+  --fg-2: #55555f;          /* 次级信息 */
+  --fg-3: #8a8a95;          /* 元数据 */
+  --fg-4: #b0b0ba;          /* 占位 / 计数 */
+
+  /* ── 语义色 ────────────────────────────────────────────── */
+  /* Redis 红只用于品牌标识与危险操作，绝不用于常规强调 */
+  --brand: #d6372b;
+  --brand-weak: #fdf1f0;
+  --brand-bd: #f4cdc9;
+  --danger: #d6372b;
+  --danger-weak: #fdf1f0;
+  /* 交互强调色（选中、焦点、主按钮） */
+  --accent: #2563eb;
+  --accent-weak: #eaf1fe;
+  --accent-bd: #c3d8fb;
+  --ok: #15803d;
+  --ok-weak: #e9f7ee;
+  --warn: #b45309;
+  --warn-weak: #fdf4e7;
+
+  /* ── Redis 类型色 ──────────────────────────────────────── */
+  /* STRING 走中性灰：它出现频率最高，避免整屏彩色噪点 */
+  --t-string: #475569;  --t-string-bg: #f0f2f5;
+  --t-hash:   #6d28d9;  --t-hash-bg:   #f3efff;
+  --t-list:   #b45309;  --t-list-bg:   #fdf3e5;
+  --t-set:    #047857;  --t-set-bg:    #e7f7f0;
+  --t-zset:   #0e7490;  --t-zset-bg:   #e6f6fa;
+  --t-stream: #be185d;  --t-stream-bg: #fdecf3;
+  --t-json:   #4338ca;  --t-json-bg:   #eeeffc;
+
+  /* ── HLL 结构查看器的字段图例色 ─────────────────────────
+     专用小色板，与 Redis 类型色无关：hex 里的底色与字段表的色块同色对照。
+     bit 条是 6-bit 跨界示意的四个寄存器；miss 是热力图缺失段的斜纹。 */
+  --hx-magic: #1e40af;  --hx-magic-bg: #dbeafe;
+  --hx-enc:   #5b21b6;  --hx-enc-bg:   #ede9fe;
+  --hx-resv:  #64748b;  --hx-resv-bg:  #eef1f5;
+  --hx-card:  #92400e;  --hx-card-bg:  #fef3c7;
+  --hx-bit-0: #dbeafe;  --hx-bit-1: #d1fae5;
+  --hx-bit-2: #fde8c8;  --hx-bit-3: #e9d5ff;
+  --hx-miss-a: #111114; --hx-miss-b: #26262c;
+
+  /* ── 排版 ──────────────────────────────────────────────── */
+  --ff-ui: "Inter", "Inter Variable", "Segoe UI Variable Text", "Segoe UI",
+           system-ui, -apple-system, "PingFang SC", "Microsoft YaHei UI",
+           "Noto Sans SC", sans-serif;
+  /* 等宽栈的**末尾必须有中文字体**。JetBrains Mono / Cascadia / SF Mono /
+     Consolas 一个带 CJK 的都没有，中文会穿透整条栈落到 generic `monospace`，
+     由 WebView2 按语言挑默认等宽字体 —— Windows 简体中文下那就是宋体，
+     和周围的界面字体格格不入。CJK 本身是全角等宽，补黑体不破坏对齐。 */
+  --ff-mono: "JetBrains Mono", "Cascadia Mono", "SF Mono", Menlo, Consolas,
+             ui-monospace, "PingFang SC", "Microsoft YaHei UI", monospace;
+  --fs-10: 10px;
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-20: 20px;
+  --fs-32: 32px;  /* 大数字展示（HLL 估算基数），必须配 tabular-nums */
+
+  /* ── 尺寸（标准密度）────────────────────────────────────── */
+  --h-title: 38px;   /* 标题栏 */
+  --h-tab: 34px;     /* 标签栏 */
+  --h-bar: 36px;     /* 工具条 */
+  --h-status: 26px;  /* 状态栏 */
+  --h-tree: 30px;    /* Key 树行 */
+  --h-row: 34px;     /* 数据表行 */
+  --h-ctl: 28px;     /* 控件默认高 */
+  --h-ctl-sm: 24px;
+  --w-side: 268px;   /* 侧栏，可拖动 208–420 */
+
+  --r-4: 4px;
+  --r-6: 6px;
+  --r-8: 8px;
+  --r-10: 10px;
+
+  --sh-1: 0 1px 2px rgba(20, 20, 30, .06);
+  --sh-2: 0 2px 8px rgba(20, 20, 30, .08), 0 0 0 1px rgba(20, 20, 30, .04);
+  --sh-3: 0 12px 32px rgba(20, 20, 30, .14), 0 2px 8px rgba(20, 20, 30, .08);
+  --ring: 0 0 0 3px rgba(37, 99, 235, .18);
+
+  /* ── 用户可调排版（设置 → 外观）──────────────────────────
+     由 settings store 写入具体字体名；为空时回落到上面的字体栈。
+     组件里写等宽认准 var(--ff-mono-user)。拼错成不存在的名字（如 --font-mono）
+     不会报错：引用未定义的自定义属性会让整条 font-family 声明在计算值阶段失效，
+     于是静默继承界面字体 —— 只有逐位比对 `23:41:07` 这种读数才看得出来。 */
+  --ff-ui-user: var(--ff-ui);
+  --ff-mono-user: var(--ff-mono);
+}
+
+/* 密度切换：设置 → 外观 → 行高密度 */
+:root[data-density="compact"] { --h-tree: 26px; --h-row: 30px; --h-ctl: 26px; }
+:root[data-density="cozy"]    { --h-tree: 34px; --h-row: 40px; --h-ctl: 30px; }

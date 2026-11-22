@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>04 设置 — Tsubasa Redis Manager</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/ui.css">
+<script src="assets/proto.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <div class="pagehd">
+    <a href="index.html">← 原型索引</a>
+    <div>
+      <h1>04 · 设置</h1>
+      <div class="sub">900 × 640 对话框 · 左侧 8 个分组可点击切换</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="zoomctl" data-zoom-ctl>
+      <button data-zoom="1">100%</button><button data-zoom="0.8">80%</button><button data-zoom="0.65">65%</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap"><div class="stage">
+  <div class="win">
+
+    <!-- 背景主窗口 -->
+    <div class="titlebar">
+      <div class="brand"><span class="brand-mark"></span>Tsubasa</div>
+      <span class="vsep"></span>
+      <span style="font-size:var(--fs-12);color:var(--fg-2);display:flex;align-items:center;gap:6px">
+        <span class="cdot" style="background:#d6372b"></span>prod-east
+        <svg class="i i-12" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg><span class="mono">db0</span>
+      </span>
+      <div class="omnibar"><svg class="i i-12"><use href="#i-search"/></svg>搜索 Key、连接或命令<span class="kbd">Ctrl</span><span class="kbd">K</span></div>
+      <div class="wctl">
+        <button><svg class="i i-12"><use href="#i-minus"/></svg></button>
+        <button><svg class="i i-12"><use href="#i-maximize"/></svg></button>
+        <button class="close"><svg class="i i-12"><use href="#i-x"/></svg></button>
+      </div>
+    </div>
+    <div class="win-body">
+      <div class="side">
+        <div class="side-hd"><span class="t">连接</span><div class="spacer"></div><button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-plus"/></svg></button></div>
+        <div class="side-search"><div class="input-wrap"><svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="筛选连接…"></div></div>
+        <div class="tree">
+          <div class="trow lv-conn" style="--ind:0"><span class="tw"><svg class="i i-12"><use href="#i-chevron-down"/></svg></span><span class="cdot" style="background:#d6372b"></span><span class="tname">prod-east</span></div>
+          <div class="trow" style="--ind:1"><span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span><svg class="i i-12" style="color:var(--fg-3)"><use href="#i-database"/></svg><span class="tname mono">db0</span><span class="tcount">1,284</span></div>
+          <div class="trow lv-conn" style="--ind:0"><span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span><span class="cdot" style="background:#15803d"></span><span class="tname">local-dev</span></div>
+        </div>
+        <div class="side-ft"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-settings"/></svg></button></div>
+      </div>
+      <div class="main"><div class="emptystate"><div class="emptystate-mark"></div><h3>Tsubasa Redis Manager</h3></div></div>
+    </div>
+    <div class="statusbar">
+      <div class="sb"><span class="dot dot-ok"></span>prod-east 已连接</div>
+      <div class="spacer"></div><div class="sb"><svg class="i i-12"><use href="#i-terminal"/></svg>控制台</div>
+    </div>
+
+    <!-- ── 设置对话框 ─────────────────────────────────── -->
+    <div class="scrim">
+      <div class="dlg" style="width:900px;height:640px">
+
+        <div class="dlg-hd">
+          <svg class="i i-16" style="color:var(--accent)"><use href="#i-settings"/></svg>
+          <div><h3>设置</h3><p>更改会立即生效并写入本地配置。</p></div>
+          <div class="spacer"></div>
+          <div class="input-wrap" style="width:190px;flex:none">
+            <svg class="i i-12 lead"><use href="#i-search"/></svg>
+            <input class="input" placeholder="搜索设置项…">
+          </div>
+          <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-x"/></svg></button>
+        </div>
+
+        <div class="dlg-body" style="display:flex;overflow:hidden;padding:0">
+
+          <!-- 左侧导航 -->
+          <div class="set-nav" data-tab-group="set">
+            <div class="cap" style="padding-top:4px">应用</div>
+            <div class="set-nav-item is-active" data-tab="general"><svg class="i i-12"><use href="#i-sliders"/></svg>通用</div>
+            <div class="set-nav-item" data-tab="appearance"><svg class="i i-12"><use href="#i-droplet"/></svg>外观</div>
+            <div class="set-nav-item" data-tab="editor"><svg class="i i-12"><use href="#i-code"/></svg>编辑器</div>
+            <div class="cap">数据</div>
+            <div class="set-nav-item" data-tab="conn"><svg class="i i-12"><use href="#i-shield"/></svg>连接与安全</div>
+            <div class="set-nav-item" data-tab="viewer"><svg class="i i-12"><use href="#i-eye"/></svg>数据查看器</div>
+            <div class="set-nav-item" data-tab="fmt"><svg class="i i-12"><use href="#i-wand"/></svg>格式化器</div>
+            <div class="cap">其他</div>
+            <div class="set-nav-item" data-tab="keys"><svg class="i i-12"><use href="#i-keyboard"/></svg>快捷键</div>
+            <div class="set-nav-item" data-tab="about"><svg class="i i-12"><use href="#i-info"/></svg>关于</div>
+          </div>
+
+          <!-- ─ 通用 ─ -->
+          <div class="set-body" data-panel-group="set" data-panel="general">
+            <h3>通用</h3>
+            <div class="lead">语言、启动行为与更新。</div>
+            <div class="set-group">
+              <div class="srow">
+                <div class="srow-txt"><b>界面语言</b><p>切换后立即生效，无需重启。</p></div>
+                <div class="srow-ctl"><div class="select"><input class="input w-160" value="简体中文"><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></div></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>启动时</b><p>恢复上次会话会重新打开之前的标签页，但不会自动执行任何命令。</p></div>
+                <div class="srow-ctl"><div class="select"><input class="input w-160" value="恢复上次会话"><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></div></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>关闭窗口时最小化到托盘</b><p>保持连接与后台任务继续运行。</p></div>
+                <div class="srow-ctl"><span class="sw"></span></div>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="cap">更新</div>
+              <div class="srow">
+                <div class="srow-txt"><b>自动检查更新</b><p>每天检查一次，仅请求版本清单，不上传任何本地信息。</p></div>
+                <div class="srow-ctl">
+                  <div class="select"><input class="input w-120" value="稳定版"><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></div>
+                  <span class="sw on"></span>
+                </div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>当前版本</b><p>0.1.0 · 上次检查 2026-07-25 09:12</p></div>
+                <div class="srow-ctl"><button class="btn btn-sm"><svg class="i i-12"><use href="#i-refresh"/></svg>立即检查</button></div>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="cap">隐私</div>
+              <div class="srow">
+                <div class="srow-txt"><b>匿名使用统计</b><p>默认关闭。即使开启也只上报功能点击次数，绝不包含连接信息、key 名或值。</p></div>
+                <div class="srow-ctl"><span class="sw"></span></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>本地数据目录</b><p class="mono" style="font-size:11px">%APPDATA%\tsubasa-redis-manager</p></div>
+                <div class="srow-ctl"><button class="btn btn-sm"><svg class="i i-12"><use href="#i-folder"/></svg>打开</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ 外观 ─ -->
+          <div class="set-body is-hidden" data-panel-group="set" data-panel="appearance">
+            <h3>外观</h3>
+            <div class="lead">v0.1 只提供浅色主题，深色主题在 0.2 版本随主题变量一起开放。</div>
+            <div class="set-group">
+              <div class="srow">
+                <div class="srow-txt"><b>主题</b><p>跟随系统需要重启后完全生效。</p></div>
+                <div class="srow-ctl"><div class="seg"><button class="is-active">浅色</button><button disabled style="opacity:.45">深色</button><button disabled style="opacity:.45">跟随系统</button></div></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>强调色</b><p>用于选中、焦点与主按钮。Redis 红固定保留给品牌标识与危险操作。</p></div>
+                <div class="srow-ctl"><div class="swatches">
+                  <span class="swatch is-on" style="background:#2563eb"></span>
+                  <span class="swatch" style="background:#0e7490"></span>
+                  <span class="swatch" style="background:#6d28d9"></span>
+                  <span class="swatch" style="background:#047857"></span>
+                  <span class="swatch" style="background:#475569"></span>
+                </div></div>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="cap">排版</div>
+              <div class="srow">
+                <div class="srow-txt"><b>界面字体</b><p>候选来自系统已安装字体。</p></div>
+                <div class="srow-ctl"><div class="select"><input class="input w-160" value="Inter"><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></div></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>等宽字体</b><p>用于 key 名、字段、值与 CLI。</p></div>
+                <div class="srow-ctl"><div class="select"><input class="input mono w-160" value="JetBrains Mono"><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></div></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>界面缩放</b><p>对应窗口缩放因子，影响整个 WebView。</p></div>
+                <div class="srow-ctl">
+                  <button class="btn btn-sm btn-icon"><svg class="i i-12"><use href="#i-minus"/></svg></button>
+                  <span class="mono num" style="width:44px;text-align:center">100%</span>
+                  <button class="btn btn-sm btn-icon"><svg class="i i-12"><use href="#i-plus"/></svg></button>
+                </div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>行高密度</b><p>紧凑 26/30 px · 标准 30/34 px · 宽松 34/40 px（树行 / 表格行）。</p></div>
+                <div class="srow-ctl"><div class="seg"><button>紧凑</button><button class="is-active">标准</button><button>宽松</button></div></div>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="cap">Key 树</div>
+              <div class="srow">
+                <div class="srow-txt"><b>显示类型色点</b><p>关闭后不再对可见 key 批量执行 <code>TYPE</code>，超大 keyspace 下更省资源。</p></div>
+                <div class="srow-ctl"><span class="sw on"></span></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>显示分组内 key 数量</b><p>数量由已加载部分统计得出，非精确值。</p></div>
+                <div class="srow-ctl"><span class="sw on"></span></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>减少动效</b><p>关闭展开、切换与进度条动画。</p></div>
+                <div class="srow-ctl"><span class="sw"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ 编辑器 ─ -->
+          <div class="set-body is-hidden" data-panel-group="set" data-panel="editor">
+            <h3>编辑器</h3>
+            <div class="lead">值编辑器基于 Monaco，以下设置对所有类型的值编辑区生效。</div>
+            <div class="set-group">
+              <div class="srow"><div class="srow-txt"><b>自动换行</b><p>长值不产生横向滚动条。</p></div><div class="srow-ctl"><span class="sw on"></span></div></div>
+              <div class="srow"><div class="srow-txt"><b>显示行号</b></div><div class="srow-ctl"><span class="sw on"></span></div></div>
+              <div class="srow"><div class="srow-txt"><b>显示不可见字符</b><p>把空格、制表符、CRLF 显式画出来，排查脏数据时很有用。</p></div><div class="srow-ctl"><span class="sw"></span></div></div>
+              <div class="srow"><div class="srow-txt"><b>缩进宽度</b></div><div class="srow-ctl"><div class="seg"><button>2</button><button class="is-active">4</button></div></div></div>
+              <div class="srow"><div class="srow-txt"><b>粘贴时自动格式化 JSON</b><p>只影响显示与编辑缓冲，写回 Redis 时按当前编辑器内容原样提交。</p></div><div class="srow-ctl"><span class="sw on"></span></div></div>
+              <div class="srow"><div class="srow-txt"><b>保存前校验 JSON</b><p>解析失败时阻止写入并高亮错误位置。</p></div><div class="srow-ctl"><span class="sw on"></span></div></div>
+            </div>
+            <div class="set-group">
+              <div class="cap">大值保护</div>
+              <div class="srow">
+                <div class="srow-txt"><b>只读预览阈值</b><p>超过该大小的值以只读方式预览，避免误改后整体写回。</p></div>
+                <div class="srow-ctl"><input class="input mono w-88" value="1"><span style="font-size:var(--fs-11);color:var(--fg-3)">MB</span></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>单次加载元素数</b><p>Hash / List / Set / ZSet 每次向下滚动加载的条数。</p></div>
+                <div class="srow-ctl"><input class="input mono w-88" value="200"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ 连接与安全 ─ -->
+          <div class="set-body is-hidden" data-panel-group="set" data-panel="conn">
+            <h3>连接与安全</h3>
+            <div class="lead">这里是新建连接时的默认值，以及全局生效的危险操作策略。</div>
+            <div class="set-group">
+              <div class="cap">新建连接默认值</div>
+              <div class="srow"><div class="srow-txt"><b>Key 分隔符</b></div><div class="srow-ctl"><input class="input mono w-64" value=":"></div></div>
+              <div class="srow"><div class="srow-txt"><b>SCAN COUNT</b><p>每批游标返回的 key 数量，越大越快但单次阻塞时间越长。</p></div><div class="srow-ctl"><input class="input mono w-88" value="500"></div></div>
+              <div class="srow"><div class="srow-txt"><b>连接超时 / 命令超时</b></div><div class="srow-ctl"><input class="input mono w-64" value="10"><span style="color:var(--fg-4)">/</span><input class="input mono w-64" value="30"><span style="font-size:var(--fs-11);color:var(--fg-3)">秒</span></div></div>
+            </div>
+            <div class="set-group">
+              <div class="cap">危险操作</div>
+              <div class="srow" style="align-items:flex-start">
+                <div class="srow-txt">
+                  <b>执行前需要确认的命令</b>
+                  <p>在标记为生产环境的连接上，还需要额外输入连接名才能继续。</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:9px">
+                    <span style="display:inline-flex;align-items:center;gap:6px"><span class="cbx on"><svg class="i i-12"><use href="#i-check"/></svg></span><span class="mono">FLUSHALL</span></span>
+                    <span style="display:inline-flex;align-items:center;gap:6px"><span class="cbx on"><svg class="i i-12"><use href="#i-check"/></svg></span><span class="mono">FLUSHDB</span></span>
+                    <span style="display:inline-flex;align-items:center;gap:6px"><span class="cbx on"><svg class="i i-12"><use href="#i-check"/></svg></span><span class="mono">KEYS</span></span>
+                    <span style="display:inline-flex;align-items:center;gap:6px"><span class="cbx on"><svg class="i i-12"><use href="#i-check"/></svg></span><span class="mono">批量删除</span></span>
+                    <span style="display:inline-flex;align-items:center;gap:6px"><span class="cbx"><svg class="i i-12"><use href="#i-check"/></svg></span><span class="mono">RENAME 覆盖</span></span>
+                    <span style="display:inline-flex;align-items:center;gap:6px"><span class="cbx on"><svg class="i i-12"><use href="#i-check"/></svg></span><span class="mono">DEBUG / CONFIG</span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>命令日志保留条数</b><p>控制台里保留的历史命令与回包数量，超出后丢弃最早的记录。</p></div>
+                <div class="srow-ctl"><input class="input mono w-88" value="1000"></div>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="cap">凭据</div>
+              <div class="srow">
+                <div class="srow-txt"><b>存储位置</b><p>Windows 凭据管理器 · macOS 钥匙串 · Linux Secret Service。配置文件中只保存「是否设置过密码」的标记。</p></div>
+                <div class="srow-ctl"><span class="tag tag-ok"><svg class="i i-12"><use href="#i-lock"/></svg>可用</span></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>清除全部已保存凭据</b><p>删除本应用写入密钥链的所有条目，连接配置本身会保留。</p></div>
+                <div class="srow-ctl"><button class="btn btn-sm btn-danger"><svg class="i i-12"><use href="#i-trash"/></svg>清除…</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ 数据查看器 ─ -->
+          <div class="set-body is-hidden" data-panel-group="set" data-panel="viewer">
+            <h3>数据查看器</h3>
+            <div class="lead">决定值默认以什么形式呈现，以及自动识别哪些编码。</div>
+            <div class="set-group">
+              <div class="srow">
+                <div class="srow-txt"><b>默认查看模式</b><p>「自动」会先尝试 JSON，失败后回落到文本；非 UTF-8 内容一律回落到 Hex。</p></div>
+                <div class="srow-ctl"><div class="seg"><button class="is-active">自动</button><button>文本</button><button>JSON</button><button>Hex</button></div></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>自动识别编码</b><p>打开值时按下表顺序试探，命中后在值详情条上显示绿色标签。</p></div>
+                <div class="srow-ctl"><span class="sw on"></span></div>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="cap">编解码</div>
+              <div style="border:1px solid var(--bd);border-radius:var(--r-8);overflow:hidden;margin-top:8px">
+                <table class="dt">
+                  <colgroup><col style="width:150px"><col style="width:130px"><col><col style="width:74px"></colgroup>
+                  <thead><tr><th>编码</th><th>能力</th><th>说明</th><th class="r">自动识别</th></tr></thead>
+                  <tbody>
+                    <tr><td class="k">gzip</td><td><span class="tag tag-ok">读写</span></td><td class="muted">Rust 端完整往返</td><td class="r"><span class="sw sm on" style="display:inline-block"></span></td></tr>
+                    <tr><td class="k">deflate</td><td><span class="tag tag-ok">读写</span></td><td class="muted">Rust 端完整往返</td><td class="r"><span class="sw sm on" style="display:inline-block"></span></td></tr>
+                    <tr><td class="k">deflate-raw</td><td><span class="tag tag-ok">读写</span></td><td class="muted">Rust 端完整往返</td><td class="r"><span class="sw sm" style="display:inline-block"></span></td></tr>
+                    <tr><td class="k">brotli</td><td><span class="tag tag-ok">读写</span></td><td class="muted">Rust 端完整往返</td><td class="r"><span class="sw sm on" style="display:inline-block"></span></td></tr>
+                    <tr><td class="k">msgpack</td><td><span class="tag tag-accent">读写</span></td><td class="muted">在渲染层往返</td><td class="r"><span class="sw sm on" style="display:inline-block"></span></td></tr>
+                    <tr><td class="k">php-serialize</td><td><span class="tag tag-accent">读写</span></td><td class="muted">在渲染层往返</td><td class="r"><span class="sw sm" style="display:inline-block"></span></td></tr>
+                    <tr><td class="k">protobuf</td><td><span class="tag tag-accent">读写</span></td><td class="muted">需要下方的 .proto 定义</td><td class="r"><span class="sw sm" style="display:inline-block"></span></td></tr>
+                    <tr><td class="k">pickle</td><td><span class="tag tag-warn">只读</span></td><td class="muted">仅解码，不支持写回</td><td class="r"><span class="sw sm" style="display:inline-block"></span></td></tr>
+                    <tr><td class="k">java-serialize</td><td><span class="tag tag-warn">只读</span></td><td class="muted">仅解码，不支持写回</td><td class="r"><span class="sw sm" style="display:inline-block"></span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="cap">Protobuf 定义</div>
+              <div class="srow">
+                <div class="srow-txt"><b>已加载 .proto 文件</b><p class="mono" style="font-size:11px">schema/order.proto · schema/user.proto</p></div>
+                <div class="srow-ctl"><button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>添加文件…</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ 格式化器 ─ -->
+          <div class="set-body is-hidden" data-panel-group="set" data-panel="fmt">
+            <h3>格式化器</h3>
+            <div class="lead">调用外部命令把值转换成可读文本，转换结果出现在值详情条的「自定义」选项里。</div>
+            <div class="set-group">
+              <div style="border:1px solid var(--bd);border-radius:var(--r-8);overflow:hidden;margin-top:4px">
+                <table class="dt">
+                  <colgroup><col style="width:150px"><col style="width:120px"><col><col style="width:88px"></colgroup>
+                  <thead><tr><th>名称</th><th>命令</th><th>参数模板</th><th class="r">操作</th></tr></thead>
+                  <tbody>
+                    <tr><td>Protobuf → JSON</td><td class="k">protoc</td><td class="v">--decode_raw &lt;file&gt;</td>
+                      <td><div class="rowact" style="visibility:visible"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                    <tr><td>解密 payload</td><td class="k">node</td><td class="v">tools/decrypt.js &lt;hex&gt;</td>
+                      <td><div class="rowact" style="visibility:visible"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                    <tr><td>Avro → JSON</td><td class="k">avro-tools</td><td class="v">tojson &lt;file&gt;</td>
+                      <td><div class="rowact" style="visibility:visible"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px">
+                <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>添加格式化器</button>
+                <button class="btn btn-sm"><svg class="i i-12"><use href="#i-play"/></svg>用当前值测试</button>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="cap">占位符</div>
+              <div class="srow" style="border-bottom:0">
+                <div class="srow-txt">
+                  <p><code>&lt;file&gt;</code> 值写入的临时文件路径 · <code>&lt;hex&gt;</code> 十六进制字符串 · <code>&lt;base64&gt;</code> Base64 字符串。命令的标准输出即为显示内容。</p>
+                </div>
+              </div>
+              <div class="banner banner-warn" style="margin-top:2px">
+                <svg class="i i-12" style="margin-top:2px"><use href="#i-alert"/></svg>
+                <div>外部命令以当前用户权限运行。出于安全考虑，Windows 上拒绝直接执行 <code>.bat</code> / <code>.cmd</code>，命令必须是可执行文件路径或 PATH 中的可执行名。</div>
+              </div>
+            </div>
+            <div class="set-group">
+              <div class="srow">
+                <div class="srow-txt"><b>执行超时</b><p>超时后终止子进程并显示原始值。</p></div>
+                <div class="srow-ctl"><input class="input mono w-88" value="5000"><span style="font-size:var(--fs-11);color:var(--fg-3)">毫秒</span></div>
+              </div>
+              <div class="srow">
+                <div class="srow-txt"><b>输出大小上限</b><p>超出部分被截断，并在结果末尾标注。</p></div>
+                <div class="srow-ctl"><input class="input mono w-88" value="4"><span style="font-size:var(--fs-11);color:var(--fg-3)">MB</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ 快捷键 ─ -->
+          <div class="set-body is-hidden" data-panel-group="set" data-panel="keys">
+            <h3>快捷键</h3>
+            <div class="lead">点击右侧按键组合即可重新绑定。macOS 上 Ctrl 自动映射为 ⌘。</div>
+            <div class="set-group">
+              <div style="border:1px solid var(--bd);border-radius:var(--r-8);overflow:hidden;margin-top:4px">
+                <table class="dt">
+                  <colgroup><col><col style="width:180px"></colgroup>
+                  <thead><tr><th>操作</th><th class="r">按键</th></tr></thead>
+                  <tbody>
+                    <tr><td>搜索 Key</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">K</span></td></tr>
+                    <tr><td>命令面板</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">Shift</span> <span class="kbd">P</span></td></tr>
+                    <tr><td>新建连接</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">N</span></td></tr>
+                    <tr><td>打开 / 关闭控制台</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">`</span></td></tr>
+                    <tr><td>刷新当前 Key</td><td class="r"><span class="kbd">F5</span></td></tr>
+                    <tr><td>重命名 Key</td><td class="r"><span class="kbd">F2</span></td></tr>
+                    <tr><td>删除 Key</td><td class="r"><span class="kbd">Del</span></td></tr>
+                    <tr><td>保存当前值</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">S</span></td></tr>
+                    <tr><td>关闭当前标签</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">W</span></td></tr>
+                    <tr><td>下一个 / 上一个标签</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">Tab</span></td></tr>
+                    <tr><td>在当前值内搜索</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">F</span></td></tr>
+                    <tr><td>设置</td><td class="r"><span class="kbd">Ctrl</span> <span class="kbd">,</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-sm">恢复默认</button></div>
+            </div>
+          </div>
+
+          <!-- ─ 关于 ─ -->
+          <div class="set-body is-hidden" data-panel-group="set" data-panel="about">
+            <h3>关于</h3>
+            <div class="lead">版本信息与开源声明。</div>
+            <div style="display:flex;align-items:center;gap:14px;margin-top:18px">
+              <div class="emptystate-mark" style="width:52px;height:52px"></div>
+              <div>
+                <div style="font-size:var(--fs-16);font-weight:600;letter-spacing:-.2px">Tsubasa Redis Manager</div>
+                <div class="mono" style="color:var(--fg-3);margin-top:2px">0.1.0 · Vue 3 + Tauri 2 · Windows x64</div>
+              </div>
+              <div class="spacer"></div>
+              <button class="btn"><svg class="i i-12"><use href="#i-refresh"/></svg>检查更新</button>
+            </div>
+            <div class="set-group" style="margin-top:22px">
+              <div class="srow"><div class="srow-txt"><b>开源许可</b><p>本项目以 MIT 许可发布。</p></div><div class="srow-ctl"><button class="btn btn-sm"><svg class="i i-12"><use href="#i-external"/></svg>查看</button></div></div>
+              <div class="srow"><div class="srow-txt"><b>第三方声明</b><p>Rust 与 npm 依赖的许可清单。</p></div><div class="srow-ctl"><button class="btn btn-sm"><svg class="i i-12"><use href="#i-external"/></svg>查看</button></div></div>
+              <div class="srow"><div class="srow-txt"><b>致谢</b><p>交互设计参考了 Another Redis Desktop Manager 的层级导航与查看器思路。</p></div><div class="srow-ctl"><button class="btn btn-sm"><svg class="i i-12"><use href="#i-external"/></svg>查看</button></div></div>
+              <div class="srow"><div class="srow-txt"><b>项目主页</b><p class="mono" style="font-size:11px">github.com/AoShizuku/TsubasaRedisManager</p></div><div class="srow-ctl"><button class="btn btn-sm"><svg class="i i-12"><use href="#i-external"/></svg>打开</button></div></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="dlg-ft">
+          <button class="btn btn-sm btn-ghost"><svg class="i i-12"><use href="#i-history"/></svg>恢复本页默认值</button>
+          <div class="spacer"></div>
+          <span style="font-size:var(--fs-11);color:var(--fg-4)">更改已自动保存</span>
+          <button class="btn btn-primary">完成</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  </div></div>
+
+  <div class="note">
+    <b>设计要点</b>
+    <ul>
+      <li>设置项一律用 <b>「标题 + 一行说明 + 右侧控件」</b> 的行式布局，不用卡片分块。说明文字负责解释「这个开关会造成什么后果」，而不是复述标题。</li>
+      <li>分组顺序按使用频率排：应用（通用 / 外观 / 编辑器）→ 数据（连接与安全 / 数据查看器 / 格式化器）→ 其他（快捷键 / 关于）。</li>
+      <li>「数据查看器」直接把后端 <code>codec_support_matrix()</code> 的九种编码及其能力（Rust 往返 / 渲染层往返 / 只读）摊开展示，用户能立刻知道哪些格式能改、哪些只能看。</li>
+      <li>「格式化器」把外部命令的安全约束（禁止 <code>.bat</code>/<code>.cmd</code>、超时、输出上限）写在界面上，而不是等执行失败再报错。</li>
+      <li>设置改动即时生效并自动保存，底部只保留「恢复本页默认值」和「完成」，不做「应用 / 确定 / 取消」三按钮那一套。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

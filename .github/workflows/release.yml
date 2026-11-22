@@ -1,0 +1,122 @@
+# CD —— main 上打 `v*` tag 触发 Windows 出包，并发布为 GitHub Release。
+#
+# 版本号在三处：package.json、src-tauri/Cargo.toml、src-tauri/tauri.conf.json。安装包名与
+# 「关于」里的版本取自 tauri.conf.json，tag 名必须与三处**全部一致**，由 guard 校验——
+# 不一致就是「忘了 bump 版本号」，放过去会产出 Release 名与安装包版本错位的包。
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  # tag 必须落在 main 上才出包。on.push.tags 没法按分支过滤，
+  # 只能判断 tag 指向的 commit 是不是 main 的祖先（或就是 main 顶端）。
+  # 单独一个 job：不合规的 tag 不去启动 Windows runner。
+  guard:
+    name: 校验 tag
+    runs-on: ubuntu-latest
+    outputs:
+      on_main: ${{ steps.contained.outputs.on_main }}
+    steps:
+      - name: 检出
+        uses: actions/checkout@v7
+        with:
+          # merge-base 需要完整历史，浅克隆会误判
+          fetch-depth: 0
+
+      - name: 判断 tag 是否被 main 包含
+        id: contained
+        run: |
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if git merge-base --is-ancestor HEAD refs/remotes/origin/main; then
+            echo "on_main=true" >> "$GITHUB_OUTPUT"
+            echo "tag $GITHUB_REF_NAME 在 main 上，继续出包"
+          else
+            echo "on_main=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::tag $GITHUB_REF_NAME 不在 main 上，跳过出包"
+          fi
+
+      - name: 校验 tag 名与三处版本号一致
+        if: steps.contained.outputs.on_main == 'true'
+        run: |
+          pkg="v$(node -p "require('./package.json').version")"
+          conf="v$(node -p "require('./src-tauri/tauri.conf.json').version")"
+          cargo="v$(sed -n 's/^version = "\(.*\)"$/\1/p' src-tauri/Cargo.toml | head -n1)"
+          echo "tag=$GITHUB_REF_NAME package.json=$pkg tauri.conf.json=$conf Cargo.toml=$cargo"
+          for v in "$pkg" "$conf" "$cargo"; do
+            if [ "$v" != "$GITHUB_REF_NAME" ]; then
+              echo "::error::tag $GITHUB_REF_NAME 与版本号对不上——忘了 bump 版本号？"
+              exit 1
+            fi
+          done
+
+  build-win:
+    name: 出 Windows 安装包并发布
+    needs: guard
+    if: needs.guard.outputs.on_main == 'true'
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 检出
+        uses: actions/checkout@v7
+
+      - name: 准备 Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 准备 Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 缓存 Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: 安装依赖
+        run: npm ci
+
+      # 只出 NSIS 安装包。beforeBuildCommand 会先跑 `npm run build`
+      - name: 构建安装包
+        run: npm run tauri:build -- --bundles nsis
+
+      # 安装包名带空格（productName），统一改成无空格的名字再外发
+      - name: 挑出要发布的产物
+        shell: bash
+        run: |
+          mkdir -p release
+          version="${GITHUB_REF_NAME#v}"
+          src=$(ls src-tauri/target/release/bundle/nsis/*-setup.exe)
+          cp "$src" "release/TsubasaRedisManager-${version}-x64-setup.exe"
+          ls -lh release/
+
+      # 兜底：发版那步万一挂了，包还能从这次 run 里捞出来
+      - name: 上传安装包（Actions 制品）
+        uses: actions/upload-artifact@v7
+        with:
+          name: tsubasa-redis-manager-win-nsis
+          path: release/*.exe
+          if-no-files-found: error
+          retention-days: 90
+
+      # 重推同名 tag 时替换附件，而不是撞上「已存在」直接失败
+      - name: 发布版本并挂上安装包
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" release/*.exe --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" release/*.exe \
+              --title "Tsubasa Redis Manager $GITHUB_REF_NAME" \
+              --notes "更新内容见 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/$GITHUB_REF_NAME/CHANGELOG.md)。项目正在迭代，尚未稳定。Windows 安装包尚未代码签名，首次运行时 SmartScreen 会提示。" \
+              --prerelease \
+              --verify-tag
+          fi

@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>02 主窗口 · 展开实例 — Tsubasa Redis Manager</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/ui.css">
+<script src="assets/proto.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <div class="pagehd">
+    <a href="index.html">← 原型索引</a>
+    <div>
+      <h1>02 · 主窗口（展开一个实例）</h1>
+      <div class="sub">1280 × 800 · 浅色 · 已连接 + 打开 HASH + 右键菜单</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="zoomctl" data-zoom-ctl>
+      <button data-zoom="1">100%</button><button data-zoom="0.8">80%</button><button data-zoom="0.65">65%</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap"><div class="stage">
+  <div class="win">
+
+    <!-- ── 标题栏 ─────────────────────────────────────── -->
+    <div class="titlebar">
+      <div class="brand"><span class="brand-mark"></span>Tsubasa</div>
+      <span class="vsep"></span>
+      <span style="font-size:var(--fs-12);color:var(--fg-2);display:flex;align-items:center;gap:6px">
+        <span class="cdot" style="background:#d6372b"></span>prod-east
+        <svg class="i i-12" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+        <span class="mono">db0</span>
+      </span>
+      <div class="omnibar">
+        <svg class="i i-12"><use href="#i-search"/></svg>
+        搜索 Key、连接或命令
+        <span class="kbd">Ctrl</span><span class="kbd">K</span>
+      </div>
+      <div class="wctl">
+        <button><svg class="i i-12"><use href="#i-minus"/></svg></button>
+        <button><svg class="i i-12"><use href="#i-maximize"/></svg></button>
+        <button class="close"><svg class="i i-12"><use href="#i-x"/></svg></button>
+      </div>
+    </div>
+
+    <div class="win-body">
+
+      <!-- ── 侧栏：展开的 Key 树 ───────────────────────── -->
+      <div class="side">
+        <div class="side-hd">
+          <span class="t">连接</span>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost btn-icon btn-sm" title="折叠全部"><svg class="i i-12"><use href="#i-chevron-up"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" title="刷新"><svg class="i i-12"><use href="#i-refresh"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" title="新建连接"><svg class="i"><use href="#i-plus"/></svg></button>
+        </div>
+
+        <div class="side-search">
+          <div class="input-wrap">
+            <svg class="i i-12 lead"><use href="#i-search"/></svg>
+            <input class="input mono" value="user:profile:*">
+            <span class="trail"><span class="tag tag-accent">312</span></span>
+          </div>
+          <button class="btn btn-icon" title="扫描选项"><svg class="i"><use href="#i-filter"/></svg></button>
+        </div>
+
+        <div class="tree">
+          <!-- 连接 -->
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-down"/></svg></span>
+            <span class="cdot" style="background:#d6372b"></span>
+            <span class="tname">prod-east</span>
+            <span class="tbadges">
+              <span class="tag" style="padding:0 4px" title="集群"><svg class="i i-12"><use href="#i-branch"/></svg></span>
+              <span class="tag tag-danger" style="padding:0 4px" title="只读"><svg class="i i-12"><use href="#i-lock"/></svg></span>
+            </span>
+          </div>
+          <!-- DB -->
+          <div class="trow" style="--ind:1">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-down"/></svg></span>
+            <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-database"/></svg>
+            <span class="tname mono" style="font-weight:500">db0</span>
+            <span class="tcount">1,284</span>
+          </div>
+          <!-- namespace -->
+          <div class="trow lv-ns" style="--ind:2">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-down"/></svg></span>
+            <svg class="i i-12" style="color:#c08a3e"><use href="#i-folder-open"/></svg>
+            <span class="tname">user</span>
+            <span class="tcount">312+</span>
+          </div>
+          <div class="trow lv-ns" style="--ind:3">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-down"/></svg></span>
+            <svg class="i i-12" style="color:#c08a3e"><use href="#i-folder-open"/></svg>
+            <span class="tname">profile</span>
+            <span class="tcount">48</span>
+          </div>
+          <div class="trow lv-key" style="--ind:4">
+            <span class="tw"></span><span class="tdot hash"></span>
+            <span class="tname">1001</span>
+          </div>
+          <div class="trow lv-key is-sel" style="--ind:4">
+            <span class="tw"></span><span class="tdot hash"></span>
+            <span class="tname">1002</span>
+          </div>
+          <div class="trow lv-key is-ctx" style="--ind:4">
+            <span class="tw"></span><span class="tdot hash"></span>
+            <span class="tname">1003</span>
+          </div>
+          <div class="trow lv-ns" style="--ind:3">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <svg class="i i-12" style="color:#c9a86a"><use href="#i-folder"/></svg>
+            <span class="tname">session</span>
+            <span class="tcount">264+</span>
+          </div>
+          <div class="trow lv-ns" style="--ind:2">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <svg class="i i-12" style="color:#c9a86a"><use href="#i-folder"/></svg>
+            <span class="tname">order</span>
+            <span class="tcount">98+</span>
+          </div>
+          <div class="trow lv-ns" style="--ind:2">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <svg class="i i-12" style="color:#c9a86a"><use href="#i-folder"/></svg>
+            <span class="tname">cache</span>
+            <span class="tcount">612+</span>
+          </div>
+          <div class="trow lv-key" style="--ind:2">
+            <span class="tw"></span><span class="tdot string"></span>
+            <span class="tname">config:features</span>
+          </div>
+          <div class="trow lv-key" style="--ind:2">
+            <span class="tw"></span><span class="tdot stream"></span>
+            <span class="tname">events:audit</span>
+          </div>
+          <div class="trow-more" style="--ind:2">
+            <svg class="i i-12"><use href="#i-chevron-down"/></svg>
+            加载更多 <span style="color:var(--fg-4)">· 已扫描 12,480 / 约 128,000</span>
+          </div>
+
+          <div class="trow" style="--ind:1">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-database"/></svg>
+            <span class="tname mono">db1</span><span class="tcount">42</span>
+          </div>
+          <div class="trow" style="--ind:1">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-database"/></svg>
+            <span class="tname mono">db2</span><span class="tcount">0</span>
+          </div>
+
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <span class="cdot" style="background:#b45309"></span>
+            <span class="tname">staging-eu</span>
+            <span class="tbadges"><span class="tag" style="padding:0 4px"><svg class="i i-12"><use href="#i-link"/></svg></span></span>
+          </div>
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <span class="cdot" style="background:#0e7490"></span>
+            <span class="tname">analytics-sentinel</span>
+          </div>
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <span class="cdot" style="background:#15803d"></span>
+            <span class="tname">local-dev</span>
+          </div>
+        </div>
+
+        <div class="side-ft">
+          <button class="btn btn-ghost btn-icon btn-sm" title="设置"><svg class="i"><use href="#i-settings"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" title="内存分析"><svg class="i"><use href="#i-chart"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" title="Monitor"><svg class="i"><use href="#i-activity"/></svg></button>
+          <div class="spacer"></div>
+          <span style="font-size:var(--fs-10);color:var(--fg-4);padding-right:4px">v0.1.0</span>
+        </div>
+      </div>
+
+      <!-- ── 主区 ──────────────────────────────────────── -->
+      <div class="main">
+
+        <div class="tabbar">
+          <div class="tab is-active">
+            <span class="tdot hash"></span>
+            <span class="tab-name">user:profile:1002</span>
+            <span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span>
+          </div>
+          <div class="tab">
+            <span class="tdot zset"></span>
+            <span class="tab-name">order:2026:0715</span>
+            <span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span>
+          </div>
+          <div class="tab">
+            <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-terminal"/></svg>
+            <span class="tab-name">CLI · prod-east</span>
+            <span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span>
+          </div>
+          <button class="btn btn-ghost btn-icon btn-sm tabadd" title="新建标签"><svg class="i"><use href="#i-plus"/></svg></button>
+          <div class="tabtools">
+            <button class="btn btn-ghost btn-icon btn-sm" title="分割视图"><svg class="i"><use href="#i-columns"/></svg></button>
+          </div>
+        </div>
+
+        <!-- Key 元信息头 -->
+        <div class="keyhdr">
+          <div class="kh-main">
+            <h2>user:profile:1002 <span class="chip hash">HASH</span></h2>
+            <div class="keymeta">
+              <span><b>9</b> 字段</span>
+              <span><b>1.24 KB</b></span>
+              <span>编码 <b>listpack</b></span>
+              <span>slot <b>9241</b></span>
+              <span>prod-east / db0</span>
+            </div>
+          </div>
+          <div class="kh-act">
+            <button class="ttl" title="点击修改过期时间">
+              <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">23:41:07</span>
+              <svg class="i i-12 caret"><use href="#i-chevron-down"/></svg>
+            </button>
+            <span class="vsep"></span>
+            <button class="btn btn-ghost btn-icon btn-sm" title="刷新"><svg class="i"><use href="#i-refresh"/></svg></button>
+            <button class="btn btn-ghost btn-icon btn-sm" title="重命名"><svg class="i"><use href="#i-pencil"/></svg></button>
+            <button class="btn btn-ghost btn-icon btn-sm" title="复制 Key 名"><svg class="i"><use href="#i-copy"/></svg></button>
+            <span class="vsep"></span>
+            <button class="btn btn-ghost btn-icon btn-sm" title="删除" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+          </div>
+        </div>
+
+        <!-- 类型工具条 -->
+        <div class="toolbar">
+          <div class="input-wrap" style="max-width:236px">
+            <svg class="i i-12 lead"><use href="#i-search"/></svg>
+            <input class="input" placeholder="在 9 个字段中筛选…">
+          </div>
+          <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>添加字段</button>
+          <div class="spacer"></div>
+          <div class="seg">
+            <button class="is-active">表格</button>
+            <button>JSON</button>
+            <button>原始</button>
+          </div>
+          <span class="vsep"></span>
+          <button class="btn btn-ghost btn-icon btn-sm" title="列设置"><svg class="i"><use href="#i-sliders"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" title="全屏"><svg class="i"><use href="#i-expand"/></svg></button>
+        </div>
+
+        <!-- 数据表 -->
+        <div class="tablewrap">
+          <table class="dt">
+            <colgroup><col style="width:46px"><col style="width:200px"><col><col style="width:96px"></colgroup>
+            <thead><tr><th class="r">#</th><th>字段</th><th>值</th><th class="r">操作</th></tr></thead>
+            <tbody>
+              <tr><td class="idx">1</td><td class="k">name</td><td class="v">Alice Zhang</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="idx">2</td><td class="k">email</td><td class="v">alice.zhang@example.com</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="idx">3</td><td class="k">status</td><td class="v">active</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="idx">4</td><td class="k">avatar</td><td class="v">https://cdn.example.com/avatar/1002.webp</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="idx">5</td><td class="k">tier</td><td class="v">gold</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr class="is-sel"><td class="idx">6</td><td class="k">settings</td>
+                <td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"theme":"light","density":"compact","sidebarWidth":268,"pinned":["user","order"]}</span></span></td>
+                <td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="idx">7</td><td class="k">payload</td>
+                <td><span class="vprev"><span class="vtag">GZIP</span><span class="v clip" style="color:var(--fg-4)">1f 8b 08 00 00 00 00 00 00 0a ed 5d 6b 73 db 38 …  (3.1 KB)</span></span></td>
+                <td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="idx">8</td><td class="k">lastLoginAt</td><td class="v">1753412480 <span style="color:var(--fg-4)">· 2026-07-25 10:21:20</span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="idx">9</td><td class="k">tags</td>
+                <td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">["beta","internal","early-access"]</span></span></td>
+                <td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 值详情抽屉 -->
+        <div class="drawer">
+          <div class="drawer-hd">
+            <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-chevron-down"/></svg>
+            <span class="t">值详情</span>
+            <span class="mono" style="color:var(--fg-3)">settings</span>
+            <span class="tag">231 B</span>
+            <div class="spacer"></div>
+            <span class="tag tag-ok"><svg class="i i-12"><use href="#i-wand"/></svg>自动识别 JSON</span>
+            <div class="seg">
+              <button>文本</button><button class="is-active">JSON</button><button>Hex</button>
+              <button>Binary</button><button>MsgPack</button><button>自定义…</button>
+            </div>
+            <span class="vsep"></span>
+            <button class="btn btn-ghost btn-icon btn-sm" title="复制"><svg class="i i-12"><use href="#i-copy"/></svg></button>
+            <button class="btn btn-sm btn-primary"><svg class="i i-12"><use href="#i-save"/></svg>保存</button>
+          </div>
+          <div class="drawer-body">
+            <div class="editor">
+              <div class="ed-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9</div>
+              <div class="ed-code"><span class="tk-pun">{</span>
+  <span class="tk-key">"theme"</span><span class="tk-pun">:</span> <span class="tk-str">"light"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"density"</span><span class="tk-pun">:</span> <span class="tk-str">"compact"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"sidebarWidth"</span><span class="tk-pun">:</span> <span class="tk-num">268</span><span class="tk-pun">,</span>
+  <span class="tk-key">"notifications"</span><span class="tk-pun">:</span> <span class="tk-bool">true</span><span class="tk-pun">,</span>
+  <span class="tk-key">"pinned"</span><span class="tk-pun">:</span> <span class="tk-pun">[</span>
+    <span class="tk-str">"user"</span><span class="tk-pun">,</span> <span class="tk-str">"order"</span>
+  <span class="tk-pun">]</span>
+<span class="tk-pun">}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 状态栏 ─────────────────────────────────────── -->
+    <div class="statusbar">
+      <div class="sb"><span class="dot dot-ok"></span>prod-east 已连接</div>
+      <div class="sb-sep"></div>
+      <div class="sb">Redis 7.2.4 · 集群 6 节点</div>
+      <div class="sb-sep"></div>
+      <div class="sb"><svg class="i i-12"><use href="#i-database"/></svg>db0 · 1,284 keys</div>
+      <div class="sb-sep"></div>
+      <div class="sb"><svg class="i i-12"><use href="#i-hdd"/></svg>1.24 GB / 4 GB</div>
+      <div class="sb-sep"></div>
+      <div class="sb">
+        SCAN <span class="num">12,480</span> · 匹配 <span class="num">312</span>
+        <span class="pbar" style="width:56px;margin:0 2px"><i style="width:38%"></i></span>
+        <svg class="i i-12" style="color:var(--brand)"><use href="#i-stop"/></svg>
+      </div>
+      <div class="spacer"></div>
+      <div class="sb"><svg class="i i-12" style="color:var(--accent)"><use href="#i-zap"/></svg>2 个任务运行中</div>
+      <div class="sb-sep"></div>
+      <div class="sb" style="color:var(--brand)"><svg class="i i-12"><use href="#i-lock"/></svg>只读</div>
+      <div class="sb-sep"></div>
+      <div class="sb"><svg class="i i-12"><use href="#i-terminal"/></svg>控制台</div>
+    </div>
+
+    <!-- ── 右键菜单（锚定在 user:profile:1003）───────────── -->
+    <div class="menu" style="left:112px;top:334px">
+      <div class="menu-cap mono" style="text-transform:none;letter-spacing:0">user:profile:1003</div>
+      <div class="menu-item is-hl"><svg class="i i-12"><use href="#i-enter"/></svg>打开<span class="kbd">Enter</span></div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-columns"/></svg>在分割视图中打开</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-copy"/></svg>复制 Key 名<span class="kbd">Ctrl C</span></div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-braces"/></svg>复制为 JSON</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-pencil"/></svg>重命名<span class="kbd">F2</span></div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-file"/></svg>克隆…</div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-clock"/></svg>设置 TTL…</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-terminal"/></svg>在 CLI 中打开</div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-chart"/></svg>内存分析</div>
+      <div class="menu-item"><svg class="i i-12"><use href="#i-download"/></svg>导出该分组…</div>
+      <div class="menu-sep"></div>
+      <div class="menu-item danger"><svg class="i i-12"><use href="#i-trash"/></svg>删除<span class="kbd">Del</span></div>
+    </div>
+
+  </div>
+  </div></div>
+
+  <div class="note">
+    <b>设计要点</b>
+    <ul>
+      <li><b>三段式主区</b>：Key 元信息头（类型 / 大小 / 编码 / slot）→ 类型工具条 → 数据表 → 值详情抽屉。抽屉可拖动高度，也可折叠成一行。</li>
+      <li><b>TTL 单独提出来做成控件</b>，放在操作组最前面。它是唯一会自己变化、自带破坏性、又高频被修改的属性，混在灰色元信息里和 <code>编码</code>、<code>slot</code> 平级是不对的。倒计时在前端本地递减，不要每秒轮询服务端 <code>TTL</code>。完整规格见 <code>doc/frontend/ttl.md</code>。</li>
+      <li><b>树里不显示 TTL</b>：每个 key 显示 TTL 意味着每个 key 多一条 <code>TTL</code> 命令，类型色点已经付了一次 <code>TYPE</code> 的代价，再翻倍在大 keyspace 上不划算。做成设置项，默认关闭。</li>
+      <li><b>两级搜索严格分离</b>：侧栏搜索框做全局 Key SCAN（<code>redis_start_search_keys</code>），工具条上的筛选框只在当前 Key 已加载的字段内过滤。</li>
+      <li><b>SCAN 状态常驻状态栏</b>：已扫描数 / 匹配数 / 进度条 / 停止按钮，对应 <code>TaskProgressEvent</code>；树的末尾另有一行「加载更多」，两处联动。</li>
+      <li><b>值查看管线</b>在抽屉里，而不是弹窗：文本 / JSON / Hex / Binary / MsgPack / 自定义格式化器，对应后端 <code>CodecName</code> 九种编解码，自动识别结果以绿色标签提示。</li>
+      <li><b>标签栏的 <code>+</code> 是所有非 key 标签页的入口</b>——CLI、Monitor、订阅、Key 浏览器、内存分析都从这个下拉菜单新建，菜单形态见 <code>06-tree-modes.html</code>。状态栏的内存读数 <code>1.24 GB / 4 GB</code> 可点击，直接打开按内存降序排的 Key 浏览器。</li>
+      <li><b>只读连接</b>在状态栏右下角持续显示红色锁标，写入类按钮（添加字段、保存、删除）在真实实现中应置灰。</li>
+      <li>右键菜单覆盖 ref 文档要求的全部操作：复制、重命名、克隆、TTL、CLI、导出、删除；删除项用 Redis 红。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

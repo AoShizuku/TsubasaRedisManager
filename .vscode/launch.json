@@ -1,0 +1,70 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "npm: dev",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "npm: build",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run build",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "npm: preview",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run preview",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "npm: tauri",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run tauri:dev",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Tauri: dev",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/src-tauri/target/debug/tsubasa-redis-manager.exe",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "tauri: dev:prepare",
+      "postDebugTask": "npm: dev:stop"
+    },
+    {
+      "name": "npm: tauri:build",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run tauri:build",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "npm: test:rust",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run test:rust",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "npm: lint:rust",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run lint:rust",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "npm: check",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run check",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

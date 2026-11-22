@@ -1,0 +1,109 @@
+/* ============================================================
+   Tsubasa Redis Manager — 设计令牌 (v0.1 / 浅色)
+   这些变量可以直接搬进 Vue 工程的 :root，shadcn-vue 的
+   --background / --foreground / --border 等映射见文件末尾。
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* ── 表面 ──────────────────────────────────────────────── */
+  --bg-app: #ffffff;        /* 内容区底色 */
+  --bg-chrome: #f6f6f8;     /* 标题栏 / 标签栏 / 状态栏 */
+  --bg-sidebar: #f8f8fa;    /* 左侧 Key Explorer */
+  --bg-subtle: #fbfbfc;     /* 工具条 / 表头 */
+  --bg-inset: #f2f2f5;      /* 分段控件槽、代码块底 */
+  --bg-hover: #f0f0f3;
+  --bg-active: #e6e6ea;
+  --bg-sel: #e9f0fd;        /* 选中行 */
+  --bg-sel-strong: #dbe7fb;
+
+  /* ── 线条 ──────────────────────────────────────────────── */
+  --bd: #e6e6ea;            /* 默认细线，禁止使用粗边框 */
+  --bd-strong: #d8d8de;
+  --bd-input: #d4d4dc;
+
+  /* ── 文字 ──────────────────────────────────────────────── */
+  --fg: #17171b;
+  --fg-2: #55555f;          /* 次级信息 */
+  --fg-3: #8a8a95;          /* 元数据 */
+  --fg-4: #b0b0ba;          /* 占位 / 计数 */
+
+  /* ── 语义色 ────────────────────────────────────────────── */
+  /* Redis 红只用于品牌标识与危险操作，绝不用于常规强调 */
+  --brand: #d6372b;
+  --brand-weak: #fdf1f0;
+  --brand-bd: #f4cdc9;
+  --danger: #d6372b;
+  --danger-weak: #fdf1f0;
+  /* 交互强调色（选中、焦点、主按钮） */
+  --accent: #2563eb;
+  --accent-weak: #eaf1fe;
+  --accent-bd: #c3d8fb;
+  --ok: #15803d;
+  --ok-weak: #e9f7ee;
+  --warn: #b45309;
+  --warn-weak: #fdf4e7;
+
+  /* ── Redis 类型色 ──────────────────────────────────────── */
+  /* STRING 走中性灰：它出现频率最高，避免整屏彩色噪点 */
+  --t-string: #475569;  --t-string-bg: #f0f2f5;
+  --t-hash:   #6d28d9;  --t-hash-bg:   #f3efff;
+  --t-list:   #b45309;  --t-list-bg:   #fdf3e5;
+  --t-set:    #047857;  --t-set-bg:    #e7f7f0;
+  --t-zset:   #0e7490;  --t-zset-bg:   #e6f6fa;
+  --t-stream: #be185d;  --t-stream-bg: #fdecf3;
+  --t-json:   #4338ca;  --t-json-bg:   #eeeffc;
+
+  /* ── 排版 ──────────────────────────────────────────────── */
+  --ff-ui: "Inter", "Inter Variable", "Segoe UI Variable Text", "Segoe UI",
+           system-ui, -apple-system, "PingFang SC", "Microsoft YaHei UI",
+           "Noto Sans SC", sans-serif;
+  --ff-mono: "JetBrains Mono", "Cascadia Mono", "SF Mono", Menlo, Consolas,
+             ui-monospace, monospace;
+  --fs-10: 10px;
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-20: 20px;
+
+  /* ── 尺寸（标准密度）────────────────────────────────────── */
+  --h-title: 38px;   /* 标题栏 */
+  --h-tab: 34px;     /* 标签栏 */
+  --h-bar: 36px;     /* 工具条 */
+  --h-status: 26px;  /* 状态栏 */
+  --h-tree: 30px;    /* Key 树行 */
+  --h-row: 34px;     /* 数据表行 */
+  --h-ctl: 28px;     /* 控件默认高 */
+  --h-ctl-sm: 24px;
+  --w-side: 268px;   /* 侧栏，可拖动 208–420 */
+
+  --r-4: 4px;
+  --r-6: 6px;
+  --r-8: 8px;
+  --r-10: 10px;
+
+  --sh-1: 0 1px 2px rgba(20, 20, 30, .06);
+  --sh-2: 0 2px 8px rgba(20, 20, 30, .08), 0 0 0 1px rgba(20, 20, 30, .04);
+  --sh-3: 0 12px 32px rgba(20, 20, 30, .14), 0 2px 8px rgba(20, 20, 30, .08);
+  --ring: 0 0 0 3px rgba(37, 99, 235, .18);
+}
+
+/* 密度切换：设置 → 外观 → 行高密度 */
+:root[data-density="compact"] { --h-tree: 26px; --h-row: 30px; --h-ctl: 26px; }
+:root[data-density="cozy"]    { --h-tree: 34px; --h-row: 40px; --h-ctl: 30px; }
+
+/* ── shadcn-vue 变量映射（供 Vue 工程直接使用）────────────────
+   --background:        var(--bg-app)
+   --foreground:        var(--fg)
+   --card / --popover:  #ffffff
+   --muted:             var(--bg-inset)
+   --muted-foreground:  var(--fg-3)
+   --primary:           var(--accent)
+   --destructive:       var(--brand)
+   --border / --input:  var(--bd) / var(--bd-input)
+   --ring:              var(--accent)
+   --radius:            var(--r-6)
+   ────────────────────────────────────────────────────────── */

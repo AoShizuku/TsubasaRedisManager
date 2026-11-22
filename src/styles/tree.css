@@ -1,0 +1,131 @@
+/* ============================================================
+   Key 树
+   行网格（规则见 doc/frontend/key-tree.md「行网格与对齐」，数值以这里为准）：
+     │← 8px →│← 13px × depth →│ 箭头 14 │ 6 │ 图标槽 12 │ 6 │ 标签 … │ 计数 │← 8px →│
+   标签起始 x = 46 + 13 × depth。改缩进或箭头槽宽时，下面参考线的 15 + 13k
+   与 -11px 要一起算，.trow-more / .trow-search 的 padding-left 也跟着它。
+   ============================================================ */
+
+.tree { flex: 1; overflow: auto; padding: 4px 0 10px; min-height: 0; position: relative; }
+/* 虚拟化：外层撑出总高度，行绝对定位。原型里是普通文档流，
+   实现时换成 @tanstack/vue-virtual，视觉结果必须完全一致。 */
+.tree-inner { position: relative; width: 100%; }
+
+.trow { height: var(--h-tree); display: flex; align-items: center; gap: 6px; padding-right: 8px;
+        padding-left: calc(8px + var(--ind, 0) * 13px); font-size: var(--fs-12); color: var(--fg);
+        position: absolute; top: 0; left: 0; width: 100%; }
+.trow:hover { background: var(--bg-hover); }
+.trow.is-sel { background: var(--bg-sel); }
+.trow.is-sel::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px; width: 2px;
+                       background: var(--accent); border-radius: 0 2px 2px 0; z-index: 1; }
+.trow.is-ctx { background: var(--bg-active); }
+.trow.is-cursor { box-shadow: inset 0 0 0 1px var(--accent-bd); }
+
+/* 展开箭头槽：叶子节点留空但必须占位，否则标签列会左移一格。
+   注意不要给它加通用类名（曾经用过 .empty，与页面级空状态类的 flex:1 冲突，
+   导致这个占位符吃掉整行剩余空间、把 key 名顶到最右侧）。 */
+.tw { width: 14px; height: 14px; display: grid; place-items: center; color: var(--fg-3); flex: none; }
+.tw svg { transition: transform .12s ease; }
+.tw.is-busy { color: var(--accent); }
+
+/* 图标槽统一 12px：svg.i-12 天然是 12px，色点用外边距补齐到同宽，
+   保证同深度的文件夹名与 key 名落在同一列。裸放 8px 点会让 key 名左移。 */
+.trow .tdot, .trow .cdot { margin: 0 2px; }
+.trow > svg { color: var(--fg-3); }
+
+.tname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+/* 连接名是用户起的标签，不是数据 → 界面字体 */
+.trow.lv-conn { font-size: 12.5px; font-weight: 600; }
+.trow.lv-db { font-size: var(--fs-12); }
+/* namespace 段和 key 名同属一条 key 路径，必须同字体。
+   判据是"这段文字是不是 key 路径的一部分"，不是"它在树的哪一层"。
+   否则 user:profile:1001 在树里会被拆成两种字形：前两段界面字体、末段等宽，
+   紧凑合并行（cache:page）挨着子 key（home / about）时尤其割裂。 */
+.trow.lv-key .tname,
+.trow.lv-ns .tname { font-family: var(--ff-mono-user); font-size: 11.5px; letter-spacing: -.1px; }
+.trow.lv-ns .tname { color: var(--fg); }
+.trow.is-stale .tname { color: var(--fg-3); }
+
+/* 缩进参考线：深度 ≥ 3 时仅靠 x 位置已经判断不出从属关系。
+   每条线落在**祖先层**箭头槽的中心：x = 15 + 13k，k = 0 … ind-1。
+
+   宽度要减掉 11px，不能直接写 ind × 13px。
+   写成 ind × 13px 时，区域右边界正好落在 x = 15 + 13·ind ——
+   也就是本行自己那个箭头槽（[8+13·ind, 22+13·ind]）的正中间。
+   按规范这条边界条纹在区域外不该画，但在非整数缩放下（125% / 150% / 175%）
+   边界像素会被舍入渲染出来，看起来就是一条线从 chevron 正中穿过去。
+   减 11px 让最后一条祖先线之后还留 1px 余量，边界巧合彻底消失。 */
+.trow::after { content: ""; position: absolute; top: 0; bottom: 0; left: 15px; pointer-events: none;
+               width: calc(var(--ind, 0) * 13px - 11px);
+               background-image: repeating-linear-gradient(to right, var(--bd) 0 1px, transparent 1px 13px); }
+.tree.no-guides .trow::after { display: none; }
+
+/* 紧凑路径合并行：每一段独立可 hover、可右键，否则中间层级就没有操作入口了。
+   这是 compact folders 唯一被诟病的地方，也是右键 namespace 打开 Key 浏览器
+   时能填出 cache:page:* 而不是只能退到最外层的前提。 */
+.tseg { padding: 1px 2px; border-radius: 3px; }
+.tseg:hover, .tseg.is-hover { background: var(--bg-active); box-shadow: 0 0 0 1px var(--bd-strong); }
+.tsep { color: var(--fg-4); }
+
+/* flex-shrink 给到 100：空间不足时先压缩计数，名字永远优先。
+   反过来（.tcount { flex: none }）会为了保住一个次要数字而截断名字。 */
+.tcount { margin-left: auto; font-size: var(--fs-10); color: var(--fg-4);
+          font-variant-numeric: tabular-nums; flex: 0 100 auto; min-width: 0; overflow: hidden;
+          white-space: nowrap; padding-left: 6px; }
+/* TTL 标记（设置项开启时）。刻意不与 .tcount 同形：原型里两者同槽位同字重，
+   `23:41` 会被误读成"41 个"。这里给边框和更小的字重差，读起来是个状态而不是数量。
+   margin-left:auto 让它和计数一起靠右；两者同时出现时 TTL 在前。 */
+.tttl { margin-left: auto; flex: none; padding: 0 4px; border: 1px solid var(--bd);
+        border-radius: 3px; font-size: var(--fs-10); color: var(--fg-3);
+        font-family: var(--ff-mono-user); font-variant-numeric: tabular-nums;
+        white-space: nowrap; line-height: 15px; }
+/* 快过期的 key 是排查缓存问题时第一眼要找的，给它琥珀色 —— 不是红色，
+   红色在本项目里只留给品牌与危险操作。 */
+.tttl.is-soon { color: var(--warn); border-color: var(--warn); }
+/* TTL 已经占了 auto 边距，计数跟在它后面就不该再抢一次 */
+.tttl + .tcount { margin-left: 0; }
+/* `N+` 徽标可点：点击扫描此前缀（doc/frontend/key-tree.md「文件夹内搜索与前缀权威」）。强调 = 蓝，hover 才显形 ——
+   计数本身还是元数据，不能长得像个常驻按钮。 */
+.tcount.is-action { cursor: pointer; }
+.tcount.is-action:hover { color: var(--accent); text-decoration: underline; }
+/* 前缀扫描进行中：计数位换 spinner（doc/frontend/key-tree.md「前缀权威」）。位置继承计数的右对齐；
+   忙碌指示用 accent，红色只留给危险。 */
+.trow .tspin { margin-left: auto; flex: none; color: var(--accent); }
+.tttl + .tspin { margin-left: 0; }
+
+.tbadges { display: flex; gap: 4px; margin-left: auto; flex: none; padding-left: 6px; }
+.cdot { width: 8px; height: 8px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1.5px #fff, 0 0 0 2.5px rgba(0,0,0,.06); }
+
+/* 状态信息不是 key 路径 → 界面字体；但「已加载 N / M」的数字会随扫描重绘，
+   tabular-nums 让它们原地跳动而不是左右抖。 */
+.trow-more { height: 26px; display: flex; align-items: center; gap: 6px; font-size: var(--fs-11); color: var(--accent);
+             padding-left: calc(8px + var(--ind, 0) * 13px + 20px);
+             font-variant-numeric: tabular-nums;
+             position: absolute; top: 0; left: 0; width: 100%; }
+.trow-more:hover { background: var(--bg-hover); }
+.trow-more:disabled { color: var(--fg-3); }
+
+/* 搜索态底部行：任务状态而不是「加载更多」（doc/frontend/key-tree.md「诚实信号」）。
+   整行不可点，信息态用次级前景色；蓝色留给唯一的动作（取消按钮）。
+   「已找到 N 个」的 N 随事件流重绘，tabular-nums 让它原地跳而不是左右抖。 */
+.trow-search { height: 26px; display: flex; align-items: center; gap: 6px; font-size: var(--fs-11);
+               color: var(--fg-3); padding-left: calc(8px + var(--ind, 0) * 13px + 20px);
+               padding-right: 8px; font-variant-numeric: tabular-nums;
+               position: absolute; top: 0; left: 0; width: 100%; }
+.trow-search > svg { color: var(--accent); flex: none; }
+/* 取消不是危险操作：终止一次搜索不丢任何数据 —— accent，不用红 */
+.tcancel { margin-left: auto; flex: none; padding: 1px 6px; border-radius: 3px;
+           font-size: var(--fs-11); color: var(--accent); }
+.tcancel:hover { background: var(--accent-weak); }
+
+/* 精确命中置顶行（doc/frontend/key-tree.md「精确命中」）：与普通 key 行同构（类型点 +
+   等宽 key 名），淡蓝底 + 徽标说明它为什么排在最上面。强调 = 蓝，红只给危险。 */
+.trow-exact { background: var(--accent-weak); }
+.texact { margin-left: auto; flex: none; padding: 0 4px; border: 1px solid var(--accent-bd);
+          border-radius: 3px; font-size: var(--fs-10); color: var(--accent);
+          line-height: 15px; white-space: nowrap; }
+
+/* 扁平列表模式：只留名字 + 类型点，没有命名空间层级可言，参考线自然也没意义。
+   缩进不动 —— key 仍然挂在某个 DB 下面，那一级从属关系还在。
+   它不带 TTL / 内存 / 编码列 —— 那是主区 Key 浏览器的事，268px 放不下四列。 */
+.tree.is-flat .trow::after { display: none; }

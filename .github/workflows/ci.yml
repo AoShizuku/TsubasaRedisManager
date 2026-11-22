@@ -1,0 +1,56 @@
+# CI —— 推送与 PR 跑 `npm run check` 的各段：前端构建（含 vue-tsc）、vitest、rustfmt + clippy、cargo test。
+#
+# **不跑 e2e**：e2e 要 Docker 起 Redis 单机、集群与能力矩阵，用例默认 #[ignore]，在本地跑
+# （见 doc/development.md「e2e」）。
+# 跑在 Windows 上：开发与出包都在 Windows，其他平台的分支尚未验证（doc/proposals/platform-assumptions.md）。
+#
+# 只声明 branches、不声明 tags，故推 tag 不触发本工作流（出包走 release.yml）。
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: 构建、测试与 Rust 检查
+    runs-on: windows-latest
+    steps:
+      - name: 检出
+        uses: actions/checkout@v7
+
+      - name: 准备 Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 准备 Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: 缓存 Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: 安装依赖
+        run: npm ci
+
+      # 以下分开跑，红的时候一眼看出是哪一层——四步合起来就是 `npm run check`
+      - name: 前端构建与类型检查
+        run: npm run build
+
+      - name: 前端测试
+        run: npm test
+
+      - name: rustfmt 与 clippy
+        run: npm run lint:rust
+
+      - name: Rust 测试
+        run: npm run test:rust

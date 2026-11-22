@@ -1,0 +1,115 @@
+/* ============================================================
+   浮层：右键菜单、下拉、popover、对话框、设置窗导航
+   定位交给 reka-ui（floating-ui）用内联样式下发，这里只管外观，
+   所以刻意不写 position / top / left，避免和它打架。
+   ============================================================ */
+
+/* ── 菜单（右键菜单与下拉共用）──────────────────────────── */
+.menu { min-width: 212px; background: #fff; border: 1px solid var(--bd-strong);
+        border-radius: var(--r-8); box-shadow: var(--sh-3); padding: 4px; z-index: 30; font-size: var(--fs-12);
+        max-height: var(--reka-popper-available-height, none); overflow: auto; }
+.menu-item { height: 26px; display: flex; align-items: center; gap: 8px; padding: 0 8px; border-radius: var(--r-4);
+             color: var(--fg); width: 100%; text-align: left; }
+.menu-item:hover,
+.menu-item[data-highlighted] { background: var(--bg-hover); outline: none; }
+.menu-item.is-hl { background: var(--bg-sel); }
+.menu-item.danger { color: var(--brand); }
+.menu-item.danger:hover,
+.menu-item.danger[data-highlighted] { background: var(--brand-weak); }
+.menu-item[data-disabled] { color: var(--fg-4); pointer-events: none; }
+.menu-item .kbd { margin-left: auto; }
+.menu-item .mi-trail { margin-left: auto; font-size: var(--fs-10); color: var(--fg-4); }
+.menu-sep { height: 1px; background: var(--bd); margin: 4px 6px; }
+.menu-cap { padding: 6px 8px 4px; font-size: var(--fs-10); font-weight: 600; letter-spacing: .05em;
+            text-transform: uppercase; color: var(--fg-4); }
+.menu-foot { padding: 7px 8px 4px; margin-top: 4px; border-top: 1px solid var(--bd);
+             font-size: var(--fs-10); color: var(--fg-3); display: flex; align-items: center; gap: 6px; }
+/* 整张菜单为什么不可用。多行说明，所以不像 .menu-item 那样定高。 */
+.menu-note { padding: 6px 8px; margin-bottom: 4px; border-radius: var(--r-4); background: var(--warn-weak);
+             font-size: var(--fs-11); line-height: 1.5; color: var(--warn); }
+
+/* ── 浮层（TTL 编辑等高频低风险操作用它，不要用模态）──────── */
+.pop { width: 288px; background: #fff; border: 1px solid var(--bd-strong);
+       border-radius: var(--r-8); box-shadow: var(--sh-3); z-index: 35; }
+.pop-hd { padding: 10px 12px 7px; font-size: var(--fs-11); font-weight: 600; color: var(--fg-2); }
+.pop-body { padding: 0 12px 10px; display: grid; gap: 7px; }
+.pop-opt { display: flex; align-items: center; gap: 8px; font-size: var(--fs-12); min-height: 24px; }
+.pop-note { padding: 8px 12px; border-top: 1px solid var(--bd); font-size: var(--fs-11); color: var(--fg-2); }
+.pop-note .cmd { display: block; margin-top: 3px; font-family: var(--ff-mono-user); font-size: var(--fs-10);
+                 color: var(--fg-4); user-select: text; -webkit-user-select: text; word-break: break-all; }
+.pop-ft { padding: 8px 12px; border-top: 1px solid var(--bd); background: var(--bg-subtle);
+          display: flex; align-items: center; gap: 8px; border-radius: 0 0 var(--r-8) var(--r-8); }
+
+/* ── 提示气泡 ───────────────────────────────────────────── */
+.tip { max-width: 260px; padding: 5px 8px; border-radius: var(--r-6); background: #26262e; color: #fff;
+       font-size: var(--fs-11); line-height: 1.5; box-shadow: var(--sh-2); z-index: 50; }
+
+/* ── 对话框 ─────────────────────────────────────────────── */
+.scrim { position: fixed; inset: 0; background: rgba(22, 22, 28, .34); z-index: 40; }
+.dlg { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 41;
+       background: #fff; border: 1px solid var(--bd-strong); border-radius: 12px; box-shadow: var(--sh-3);
+       display: flex; flex-direction: column; overflow: hidden; max-height: calc(100vh - 56px); }
+.dlg-hd { flex: none; display: flex; align-items: center; gap: 10px; padding: 15px 16px 13px; border-bottom: 1px solid var(--bd); }
+.dlg-hd h3 { font-size: var(--fs-14); font-weight: 600; letter-spacing: -.15px; }
+.dlg-hd p { font-size: var(--fs-11); color: var(--fg-3); margin-top: 1px; }
+.dlg-body { flex: 1; min-height: 0; overflow: auto; }
+.dlg-ft { flex: none; display: flex; align-items: center; gap: 8px; padding: 11px 14px;
+          border-top: 1px solid var(--bd); background: var(--bg-subtle); }
+/* 写操作对话框的页脚说明（批量 TTL、批量删除、新建 / 克隆 Key 共用）。
+   批量操作点下去界面什么都不变，一分钟后库才空 —— 所以后果与将要执行的
+   命令必须在按下之前就摆在眼前，见 doc/frontend/batch.md「危险写在按钮上」。 */
+.bulk-note { flex: 1 1 auto; min-width: 0; font-size: var(--fs-11); color: var(--fg-2); }
+.bulk-note > span { display: inline-flex; align-items: center; gap: 5px; }
+.bulk-danger { color: var(--brand); }
+.bulk-cmd { display: block; margin-top: 3px; font-size: var(--fs-10); color: var(--fg-4);
+            user-select: text; -webkit-user-select: text; word-break: break-all; }
+
+.dlg-tabs { flex: none; display: flex; gap: 2px; padding: 0 12px; background: var(--bg-subtle); border-bottom: 1px solid var(--bd); }
+.dlg-tab { height: 34px; padding: 0 11px; display: inline-flex; align-items: center; gap: 6px;
+           font-size: var(--fs-12); color: var(--fg-2); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.dlg-tab:hover { color: var(--fg); }
+.dlg-tab.is-active { color: var(--fg); font-weight: 500; border-bottom-color: var(--accent); }
+.dlg-tab .tag { height: 15px; font-size: 9px; padding: 0 4px; }
+.dlg-split { flex: 1; min-height: 0; display: flex; }
+
+/* ── 通知 ───────────────────────────────────────────────── */
+/* 压在状态栏之上、右下角。危险级别不自动消失，用户需要时间读完 detail。 */
+.toasts { position: fixed; right: 14px; bottom: calc(var(--h-status) + 12px); z-index: 60;
+          display: flex; flex-direction: column; gap: 8px; width: 340px; max-width: calc(100vw - 28px); }
+.toast { display: flex; align-items: flex-start; gap: 8px; padding: 9px 9px 9px 11px;
+         border-radius: var(--r-8); border: 1px solid; font-size: var(--fs-12); line-height: 1.5;
+         background: #fff; box-shadow: var(--sh-3); }
+.toast svg { margin-top: 1px; flex: none; }
+.toast-detail { margin-top: 3px; font-family: var(--ff-mono-user); font-size: var(--fs-10);
+                opacity: .8; word-break: break-word; }
+
+/* ── 设置窗 ─────────────────────────────────────────────── */
+.set-nav { width: 186px; flex: none; padding: 8px; border-right: 1px solid var(--bd); background: var(--bg-sidebar); overflow: auto; }
+.set-nav .cap { padding: 10px 8px 5px; font-size: var(--fs-10); font-weight: 600; letter-spacing: .06em;
+                text-transform: uppercase; color: var(--fg-4); }
+.set-nav-item { height: 28px; display: flex; align-items: center; gap: 8px; padding: 0 8px; border-radius: var(--r-6);
+                font-size: var(--fs-12); color: var(--fg-2); width: 100%; }
+.set-nav-item:hover { background: var(--bg-hover); color: var(--fg); }
+.set-nav-item.is-active { background: var(--bg-sel); color: var(--fg); font-weight: 500; }
+.set-nav-item.is-active svg { color: var(--accent); }
+.set-body { flex: 1; min-width: 0; overflow: auto; padding: 18px 22px 28px; }
+.set-body h3 { font-size: var(--fs-14); font-weight: 600; letter-spacing: -.15px; }
+.set-body > .lead { font-size: var(--fs-11); color: var(--fg-3); margin-top: 2px; margin-bottom: 6px; }
+.set-group { margin-top: 16px; }
+.set-group > .cap { font-size: var(--fs-10); font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+                    color: var(--fg-4); padding-bottom: 2px; }
+.srow { display: flex; align-items: center; gap: 20px; padding: 11px 0; border-bottom: 1px solid var(--bd); }
+.srow:last-child { border-bottom: 0; }
+.srow-txt { min-width: 0; }
+.srow-txt b { display: block; font-size: var(--fs-12); font-weight: 500; color: var(--fg); }
+.srow-txt p { font-size: var(--fs-11); color: var(--fg-3); line-height: 1.55; margin-top: 2px; }
+.srow-ctl { margin-left: auto; flex: none; display: flex; align-items: center; gap: 8px; }
+.srow.is-disabled .srow-txt b,
+.srow.is-disabled .srow-txt p { color: var(--fg-4); }
+
+/* 「关于」里的第三方组件清单。名字左、许可证右，比 .srow 紧凑 ——
+   这是一份用来通读的清单，不是一组可操作项。 */
+.credits { display: grid; grid-template-columns: auto auto; justify-content: start;
+           gap: 1px 14px; margin-top: 6px; }
+.credits dt { font-size: var(--fs-11); color: var(--fg-2); }
+.credits dd { font-size: var(--fs-11); color: var(--fg-4); }

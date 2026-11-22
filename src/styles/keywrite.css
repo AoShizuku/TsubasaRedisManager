@@ -1,0 +1,31 @@
+/* ============================================================
+   新建 / 克隆 Key 对话框（doc/frontend/key-write-dialog.md）
+   骨架、字段、提示、错误一律复用 .form / .field / .field-hint / .banner，
+   这里只有对话框特有的几样：源 key 的换行、初始内容的行列表、字节输入格。
+   ============================================================ */
+
+/* fieldset 只是为了一次禁用全部控件。min-width: 0 压掉它的 min-content 默认值，
+   否则一个长 key 名会把对话框撑宽。 */
+.keywrite-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+
+/* 源 key 是数据：等宽、可选中、按字节原样显示（尾随空格是真实字节）。 */
+.keywrite-key { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* 初始内容的行列表：行号 + 若干输入格 + 移除按钮。
+   输入格是可以竖向拉开的 textarea，所以整行顶部对齐而不是居中。 */
+.keywrite-rows { display: flex; flex-direction: column; gap: 6px; }
+.keywrite-row { display: flex; align-items: flex-start; gap: 8px; }
+.keywrite-idx { flex: none; width: 20px; line-height: var(--h-ctl); text-align: right;
+                font-family: var(--ff-mono-user); font-size: var(--fs-11); color: var(--fg-4);
+                font-variant-numeric: tabular-nums; }
+.keywrite-row > .btn { margin-top: 2px; } /* 24px 的小按钮对齐 28px 的输入格 */
+.keywrite-rows-ft { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.keywrite-rows-ft .field-hint { margin-top: 0; }
+
+/* 字节输入格：textarea 右上角挂一枚格式 chip。
+   单行时与普通输入等高，可竖向拉开；chip 钉在顶部，不跟着内容居中。 */
+.keywrite-bytes { flex: 1; min-width: 0; }
+.keywrite-bytes .input-wrap { align-items: flex-start; }
+.keywrite-bytes .input-wrap .trail { top: 4px; }
+.keywrite-bytes textarea.input { min-height: var(--h-ctl); padding: 3px 66px 3px 9px; }
+.keywrite-bytes .field-err { margin-top: 3px; }

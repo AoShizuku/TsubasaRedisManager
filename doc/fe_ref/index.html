@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Tsubasa Redis Manager — v0.1 设计原型</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/ui.css">
+<script src="assets/proto.js" defer></script>
+<style>
+  .card { width:100%; max-width:1280px; background:#fff; border:1px solid var(--bd); border-radius:var(--r-10); padding:18px 20px; }
+  .card > h2 { font-size:var(--fs-14); font-weight:600; letter-spacing:-.15px; }
+  .card > .lead { font-size:var(--fs-12); color:var(--fg-3); margin-top:3px; }
+  .protolist { display:grid; gap:2px; margin-top:14px; }
+  .protolist a { display:flex; align-items:center; gap:14px; padding:12px 12px; border-radius:var(--r-8);
+                 text-decoration:none; color:inherit; border:1px solid transparent; }
+  .protolist a:hover { background:var(--bg-hover); border-color:var(--bd); }
+  .protolist .no { width:30px; height:30px; border-radius:var(--r-8); flex:none; display:grid; place-items:center;
+                   font-size:var(--fs-12); font-weight:600; background:var(--bg-inset); color:var(--fg-2); }
+  .protolist b { display:block; font-size:var(--fs-13); font-weight:600; }
+  .protolist p { font-size:var(--fs-11); color:var(--fg-3); margin-top:2px; }
+  .swgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:10px; margin-top:12px; }
+  .swbox { border:1px solid var(--bd); border-radius:var(--r-6); overflow:hidden; }
+  .swbox .fill { height:38px; }
+  .swbox .meta { padding:6px 8px; font-size:var(--fs-10); line-height:1.45; }
+  .swbox .meta b { display:block; font-weight:600; font-size:var(--fs-11); }
+  .swbox .meta span { color:var(--fg-4); font-family:var(--ff-mono); }
+  .demorow { display:flex; align-items:center; flex-wrap:wrap; gap:10px; padding:11px 0; border-bottom:1px solid var(--bd); }
+  .demorow:last-child { border-bottom:0; }
+  .demorow > .lbl { width:96px; flex:none; font-size:var(--fs-11); color:var(--fg-3); }
+  .spec { display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); gap:10px 22px; margin-top:12px; font-size:var(--fs-12); }
+  .spec div { display:flex; gap:8px; padding:5px 0; border-bottom:1px solid var(--bd); }
+  .spec span:first-child { color:var(--fg-3); flex:none; width:96px; }
+  .spec span:last-child { font-family:var(--ff-mono); font-size:11.5px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="pagehd">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span class="emptystate-mark" style="width:34px;height:34px;border-radius:9px"></span>
+      <div>
+        <h1>Tsubasa Redis Manager · v0.1 设计原型</h1>
+        <div class="sub">浅色主题 · Vue 3 + shadcn-vue · 目标气质：TablePlus × VS Code × Linear</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 原型清单 -->
+  <div class="card">
+    <h2>关键窗口</h2>
+    <div class="lead">全部使用同一套令牌与组件，窗口尺寸统一为 1280 × 800。页面内可切换缩放比例。</div>
+    <div class="protolist">
+      <a href="01-main-idle.html">
+        <span class="no">01</span>
+        <span style="min-width:0">
+          <b>主窗口 · 未选中任何实例</b>
+          <p>冷启动首屏、连接列表全折叠、空态与最近打开记录</p>
+        </span>
+        <span class="spacer"></span>
+        <span class="tag">1280 × 800</span>
+        <svg class="i" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+      </a>
+      <a href="02-main-connected.html">
+        <span class="no">02</span>
+        <span style="min-width:0">
+          <b>主窗口 · 展开一个实例</b>
+          <p>Key 树展开、多标签、HASH 编辑器、值详情抽屉、SCAN 进度、右键菜单</p>
+        </span>
+        <span class="spacer"></span>
+        <span class="tag">1280 × 800</span>
+        <svg class="i" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+      </a>
+      <a href="03-connection-new.html">
+        <span class="no">03</span>
+        <span style="min-width:0">
+          <b>新建连接</b>
+          <p>常规 / TLS / SSH 隧道 / 哨兵 / 高级，五个分页可点击切换</p>
+        </span>
+        <span class="spacer"></span>
+        <span class="tag">720 × 620 对话框</span>
+        <svg class="i" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+      </a>
+      <a href="04-settings.html">
+        <span class="no">04</span>
+        <span style="min-width:0">
+          <b>设置</b>
+          <p>通用 / 外观 / 编辑器 / 连接与安全 / 数据查看器 / 格式化器 / 快捷键 / 关于</p>
+        </span>
+        <span class="spacer"></span>
+        <span class="tag">900 × 640 对话框</span>
+        <svg class="i" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+      </a>
+      <a href="05-key-viewers.html">
+        <span class="no">05</span>
+        <span style="min-width:0">
+          <b>各类型 Key 的显示样式</b>
+          <p>STRING / HASH / LIST / SET / ZSET / STREAM / CLI，点标签切换；ZSET 标签内含 TTL 编辑浮层</p>
+        </span>
+        <span class="spacer"></span>
+        <span class="tag">1280 × 800</span>
+        <svg class="i" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+      </a>
+      <a href="06-tree-modes.html">
+        <span class="no">06</span>
+        <span style="min-width:0">
+          <b>紧凑路径与 Key 浏览器</b>
+          <p>单链合并的树、分段命中、缩进参考线，以及主区的可排序分析表</p>
+        </span>
+        <span class="spacer"></span>
+        <span class="tag">1280 × 800</span>
+        <svg class="i" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+      </a>
+      <a href="07-hyperloglog.html">
+        <span class="no">07</span>
+        <span style="min-width:0">
+          <b>HyperLogLog 查看器</b>
+          <p>STRING 子形态：基数仪表盘、结构查看器（头部染色解析 + 寄存器热力图 / 原始 hex 可切换）、截断损坏的降级态</p>
+        </span>
+        <span class="spacer"></span>
+        <span class="tag">1280 × 800</span>
+        <svg class="i" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 色板 -->
+  <div class="card">
+    <h2>色板</h2>
+    <div class="lead">中性灰打底。Redis 红是品牌色与危险色，不承担「强调」职责；强调色是蓝色，只用于选中、焦点和主按钮。</div>
+
+    <div style="font-size:var(--fs-10);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-4);margin-top:16px">表面与线条</div>
+    <div class="swgrid">
+      <div class="swbox"><div class="fill" style="background:#ffffff"></div><div class="meta"><b>内容区</b><span>--bg-app · #ffffff</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#f6f6f8"></div><div class="meta"><b>窗口外壳</b><span>--bg-chrome · #f6f6f8</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#f8f8fa"></div><div class="meta"><b>侧栏</b><span>--bg-sidebar · #f8f8fa</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#f2f2f5"></div><div class="meta"><b>控件槽</b><span>--bg-inset · #f2f2f5</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#e9f0fd"></div><div class="meta"><b>选中行</b><span>--bg-sel · #e9f0fd</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#e6e6ea"></div><div class="meta"><b>分隔线</b><span>--bd · #e6e6ea</span></div></div>
+    </div>
+
+    <div style="font-size:var(--fs-10);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-4);margin-top:18px">文字与语义</div>
+    <div class="swgrid">
+      <div class="swbox"><div class="fill" style="background:#17171b"></div><div class="meta"><b>主文字</b><span>--fg · #17171b</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#55555f"></div><div class="meta"><b>次级</b><span>--fg-2 · #55555f</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#8a8a95"></div><div class="meta"><b>元数据</b><span>--fg-3 · #8a8a95</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#d6372b"></div><div class="meta"><b>品牌 / 危险</b><span>--brand · #d6372b</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#2563eb"></div><div class="meta"><b>强调</b><span>--accent · #2563eb</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#15803d"></div><div class="meta"><b>成功</b><span>--ok · #15803d</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#b45309"></div><div class="meta"><b>警告</b><span>--warn · #b45309</span></div></div>
+    </div>
+
+    <div style="font-size:var(--fs-10);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-4);margin-top:18px">Redis 类型色</div>
+    <div class="swgrid">
+      <div class="swbox"><div class="fill" style="background:#f0f2f5;display:grid;place-items:center"><span class="chip string">STRING</span></div><div class="meta"><span>#475569 / #f0f2f5</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#f3efff;display:grid;place-items:center"><span class="chip hash">HASH</span></div><div class="meta"><span>#6d28d9 / #f3efff</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#fdf3e5;display:grid;place-items:center"><span class="chip list">LIST</span></div><div class="meta"><span>#b45309 / #fdf3e5</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#e7f7f0;display:grid;place-items:center"><span class="chip set">SET</span></div><div class="meta"><span>#047857 / #e7f7f0</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#e6f6fa;display:grid;place-items:center"><span class="chip zset">ZSET</span></div><div class="meta"><span>#0e7490 / #e6f6fa</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#fdecf3;display:grid;place-items:center"><span class="chip stream">STREAM</span></div><div class="meta"><span>#be185d / #fdecf3</span></div></div>
+      <div class="swbox"><div class="fill" style="background:#eeeffc;display:grid;place-items:center"><span class="chip json">JSON</span></div><div class="meta"><span>#4338ca / #eeeffc</span></div></div>
+    </div>
+    <p style="font-size:var(--fs-11);color:var(--fg-3);margin-top:12px;line-height:1.7">
+      STRING 刻意取中性灰：它在真实 keyspace 里占比最高，给它上色会让整个树变成彩色噪点。类型色只出现在树的圆点、标签页的圆点和元信息头的徽标这三处。
+    </p>
+  </div>
+
+  <!-- 组件 -->
+  <div class="card">
+    <h2>基础组件</h2>
+    <div class="lead">全部对应 shadcn-vue 组件，样式在 <code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--bg-inset);padding:1px 4px;border-radius:3px">assets/ui.css</code> 中定义。</div>
+    <div style="margin-top:6px">
+      <div class="demorow">
+        <span class="lbl">按钮</span>
+        <button class="btn btn-primary"><svg class="i i-12"><use href="#i-plus"/></svg>主要操作</button>
+        <button class="btn">次要操作</button>
+        <button class="btn btn-danger"><svg class="i i-12"><use href="#i-trash"/></svg>危险操作</button>
+        <button class="btn btn-ghost"><svg class="i i-12"><use href="#i-refresh"/></svg>无边框</button>
+        <button class="btn btn-sm">小号</button>
+        <button class="btn btn-icon"><svg class="i"><use href="#i-settings"/></svg></button>
+        <button class="btn" disabled>禁用</button>
+      </div>
+      <div class="demorow">
+        <span class="lbl">输入</span>
+        <div class="input-wrap" style="max-width:200px;flex:none;width:200px">
+          <svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="搜索…">
+        </div>
+        <input class="input mono" style="width:130px" value="user:profile:*">
+        <div class="select"><input class="input w-120" value="简体中文"><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></div>
+      </div>
+      <div class="demorow">
+        <span class="lbl">开关</span>
+        <span class="sw on"></span><span class="sw"></span>
+        <span class="cbx on"><svg class="i i-12"><use href="#i-check"/></svg></span><span class="cbx"></span>
+        <div class="seg"><button class="is-active">表格</button><button>JSON</button><button>Hex</button></div>
+      </div>
+      <div class="demorow">
+        <span class="lbl">徽标</span>
+        <span class="chip hash">HASH</span>
+        <span class="tag">listpack</span>
+        <span class="tag tag-ok"><svg class="i i-12"><use href="#i-check"/></svg>连接成功</span>
+        <span class="tag tag-warn">只读编解码</span>
+        <span class="tag tag-danger"><svg class="i i-12"><use href="#i-lock"/></svg>只读</span>
+        <span class="tag tag-accent">312</span>
+        <span class="kbd">Ctrl</span><span class="kbd">K</span>
+      </div>
+      <div class="demorow">
+        <span class="lbl">TTL</span>
+        <button class="ttl is-persist"><svg class="i i-12"><use href="#i-clock"/></svg><span class="val">不过期</span><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></button>
+        <button class="ttl"><svg class="i i-12"><use href="#i-clock"/></svg><span class="val">23:41:07</span><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></button>
+        <button class="ttl is-soon"><svg class="i i-12"><use href="#i-clock"/></svg><span class="val">00:47</span><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></button>
+        <button class="ttl is-gone"><svg class="i i-12"><use href="#i-alert"/></svg><span class="val">已过期</span></button>
+        <button class="ttl" disabled title="只读连接"><svg class="i i-12"><use href="#i-lock"/></svg><span class="val">7d 04:12</span></button>
+        <span style="font-size:var(--fs-11);color:var(--fg-3)">不过期 / 倒计时 / 即将过期 / 已过期 / 只读</span>
+      </div>
+      <div class="demorow">
+        <span class="lbl">状态</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-12)"><span class="dot dot-ok"></span>已连接</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-12)"><span class="dot dot-warn"></span>重连中</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-12)"><span class="dot dot-off"></span>未连接</span>
+        <span class="pbar" style="width:120px"><i style="width:38%"></i></span>
+      </div>
+      <div class="demorow">
+        <span class="lbl">提示条</span>
+        <div class="banner banner-ok" style="flex:1"><svg class="i i-12" style="margin-top:2px"><use href="#i-check"/></svg><div>连接成功 · Redis 7.2.4 · 握手 18 ms</div></div>
+      </div>
+      <div class="demorow">
+        <span class="lbl"></span>
+        <div class="banner banner-warn" style="flex:1"><svg class="i i-12" style="margin-top:2px"><use href="#i-alert"/></svg><div>关闭证书校验后会失去中间人防护。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 规格 -->
+  <div class="card">
+    <h2>尺寸与排版</h2>
+    <div class="lead">数据库工具的密度优先级高于留白。行高控制在 30–34 px，卡片和粗边框一律不用。</div>
+    <div class="spec">
+      <div><span>标题栏</span><span>38 px</span></div>
+      <div><span>标签栏</span><span>34 px</span></div>
+      <div><span>工具条</span><span>36 px</span></div>
+      <div><span>状态栏</span><span>26 px</span></div>
+      <div><span>Key 树行</span><span>30 px</span></div>
+      <div><span>数据表行</span><span>34 px</span></div>
+      <div><span>控件高度</span><span>28 / 24 px</span></div>
+      <div><span>侧栏宽度</span><span>268 px（208–420 可拖）</span></div>
+      <div><span>圆角</span><span>4 / 6 / 8 / 10 px</span></div>
+      <div><span>界面字体</span><span>Inter 13 px</span></div>
+      <div><span>等宽字体</span><span>JetBrains Mono 12 px</span></div>
+      <div><span>元数据</span><span>11 px / --fg-3</span></div>
+    </div>
+    <p style="font-size:var(--fs-11);color:var(--fg-3);margin-top:14px;line-height:1.7">
+      所有 key 名、字段名、值、分数、ID 与 CLI 一律用等宽字体；界面文案、按钮、设置项用界面字体。两者不混排在同一行的同一角色上。
+    </p>
+  </div>
+
+</div>
+</body>
+</html>

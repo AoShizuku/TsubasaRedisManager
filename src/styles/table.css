@@ -1,0 +1,130 @@
+/* ============================================================
+   数据表、编辑器、值详情抽屉、终端
+   这四处是性能敏感区：DOM 必须虚拟化，视觉必须与原型一致。
+   ============================================================ */
+
+.tablewrap { flex: 1; overflow: auto; min-height: 0; background: var(--bg-app); position: relative; }
+
+.dt { width: 100%; table-layout: fixed; font-size: var(--fs-12); }
+.dt thead th { height: 30px; padding: 0 12px; text-align: left;
+               font-size: var(--fs-10); font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+               color: var(--fg-3); background: var(--bg-subtle); border-bottom: 1px solid var(--bd); white-space: nowrap; }
+/* 只有本身就是滚动容器的表格才吸顶，避免在设置页里跟着页面浮动 */
+.tablewrap .dt thead th,
+.drawer-body .dt thead th { position: sticky; top: 0; z-index: 2; }
+.dt thead th.r { text-align: right; }
+.dt thead th.sortable { cursor: default; }
+.dt thead th.sortable:hover { color: var(--fg-2); background: var(--bg-inset); }
+.dt thead th .sorthead { display: inline-flex; align-items: center; gap: 4px; }
+.dt thead th.r .sorthead { flex-direction: row-reverse; }
+.dt tbody td { height: var(--h-row); padding: 0 12px; border-bottom: 1px solid var(--bd); vertical-align: middle;
+               overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dt tbody tr:hover td { background: var(--bg-hover); }
+.dt tbody tr.is-sel td { background: var(--bg-sel); }
+.dt td.idx { color: var(--fg-4); font-family: var(--ff-mono-user); font-size: var(--fs-11); text-align: right;
+             font-variant-numeric: tabular-nums; }
+.dt td.r { text-align: right; }
+.dt td.num { font-variant-numeric: tabular-nums; }
+
+/* 作用域必须是 .dt .k / .dt .v 而不是 .dt td.k / .dt td.v：
+   值预览的结构是 <td><span class="vprev"><span class="v">…</span></span></td>，
+   值在 span 上，限定 td 会让 JSON、十六进制这类数据掉回界面字体。
+   十六进制掉字体最致命 —— 字节直接对不齐。 */
+.dt .k { font-family: var(--ff-mono-user); font-size: 11.5px; color: var(--fg);
+         overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.dt .v { font-family: var(--ff-mono-user); font-size: 11.5px; color: var(--fg-2);
+         overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.dt .rowact { display: flex; align-items: center; gap: 1px; justify-content: flex-end; visibility: hidden; }
+.dt tr:hover .rowact, .dt tr.is-sel .rowact { visibility: visible; }
+.vprev { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; }
+.vprev .vtag { font-family: var(--ff-ui-user); font-size: var(--fs-10); color: var(--fg-4);
+               border: 1px solid var(--bd); border-radius: 3px; padding: 0 4px; height: 15px;
+               display: inline-flex; align-items: center; flex: none; }
+
+/* 虚拟化布局：<table> 的行无法绝对定位，改用 grid/flex。
+   列宽由 TanStack 的 column sizing 以内联 width 下发。
+   设置页里的静态表不加 .is-virtual，继续走原生 table 布局。 */
+.dt.is-virtual { display: grid; table-layout: auto; }
+.dt.is-virtual thead { display: grid; position: sticky; top: 0; z-index: 2; }
+.dt.is-virtual tbody { display: grid; position: relative; }
+.dt.is-virtual tr { display: flex; width: 100%; }
+.dt.is-virtual tbody tr { position: absolute; top: 0; left: 0; }
+.dt.is-virtual th,
+.dt.is-virtual td { display: flex; align-items: center; }
+.dt.is-virtual th.r,
+.dt.is-virtual td.r { justify-content: flex-end; }
+.dt.is-virtual td > * { min-width: 0; }
+
+/* 勾选列。固定 36px、最左，不上类型色 —— 表格内部不上色是三条硬规则之一。
+   注意类名带 dt- 前缀：`.check` 这种泛化名迟早撞上别的东西
+   （树行的 `.empty` 就干过这事）。 */
+.dt-check { width: 36px; flex: 0 0 36px; padding: 0 0 0 12px; justify-content: flex-start; }
+.dt thead th.dt-check { cursor: default; }
+.dt thead th.dt-check:hover .cbx { border-color: var(--accent); }
+/* 部分选中：半选态要和"全选"明显不同，否则会被当成已经全选 */
+.cbx.is-part { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* 批量操作条。选中若干行后从底部浮出，取代整行的操作按钮。 */
+.dt-bulkbar { flex: none; display: flex; align-items: center; gap: 8px; padding: 0 12px;
+              height: 38px; border-top: 1px solid var(--bd-strong); background: var(--bg-subtle); }
+.dt-bulkbar .count { font-size: var(--fs-12); font-variant-numeric: tabular-nums; }
+.dt-bulkbar .scope { font-size: var(--fs-11); color: var(--fg-3); }
+
+/* ── 代码 / 编辑器 ──────────────────────────────────────── */
+.editor { flex: 1; min-height: 0; display: flex; overflow: hidden; background: var(--bg-app);
+          font-family: var(--ff-mono-user); font-size: 12.5px; line-height: 20px; position: relative; }
+.editor .monaco-host { flex: 1; min-width: 0; min-height: 0; }
+/* Monaco 自带滚动条，别让全局细滚动条规则去改它的内部结构 */
+.editor .monaco-editor .scrollbar { z-index: 3; }
+
+/* Monaco 加载前的静态回退（首帧不闪白，也用于只读预览）。
+   字体、字号、行高、padding 都跟着 .editor 与 createEditor 里的设定走 ——
+   编辑器接手时这段文字应该基本停在原地。 */
+.ed-overlay { position: absolute; inset: 0; display: flex; flex-direction: column;
+              background: var(--bg-app); }
+.ed-fallback { flex: 1; min-height: 0; display: flex; overflow: auto;
+               user-select: text; -webkit-user-select: text; }
+.ed-gutter { flex: none; padding: 10px 10px 10px 14px; text-align: right; color: var(--fg-4);
+             user-select: none; white-space: pre; background: var(--bg-app); position: sticky; left: 0; }
+.ed-code { padding: 10px 18px 10px 6px; white-space: pre; color: var(--fg); }
+.ed-more { flex: none; padding: 6px 14px; font-size: var(--fs-11); color: var(--fg-3);
+           border-top: 1px solid var(--bd); background: var(--bg-subtle); }
+
+/* ── 值详情抽屉 ─────────────────────────────────────────── */
+.drawer { flex: none; display: flex; flex-direction: column;
+          border-top: 1px solid var(--bd-strong); background: var(--bg-subtle); min-height: 32px; }
+.drawer-hd { height: 32px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 10px;
+             border-bottom: 1px solid var(--bd); cursor: row-resize; }
+.drawer-hd .t { font-size: var(--fs-11); font-weight: 600; color: var(--fg-2); }
+.drawer-body { flex: 1; min-height: 0; overflow: auto; background: #fff; }
+.drawer.is-collapsed { height: 32px !important; }
+.drawer.is-collapsed .drawer-hd { border-bottom: 0; cursor: default; }
+.drawer.is-collapsed .drawer-body { display: none; }
+
+/* ── 终端 ───────────────────────────────────────────────── */
+/* CLI 是请求/响应，不是 PTY：没有 ANSI、没有行编辑器，
+   所以用虚拟滚动的回显区 + 真实 input，而不是终端模拟器。 */
+.term { flex: 1; min-height: 0; overflow: auto; background: #fff; padding: 10px 14px;
+        font-family: var(--ff-mono-user); font-size: 12.5px; line-height: 1.65; white-space: pre-wrap;
+        word-break: break-word; user-select: text; -webkit-user-select: text; }
+.term .cmd { color: var(--fg); }
+.term .cmd::before { content: "> "; color: var(--accent); }
+.term .ret { color: var(--fg-2); }
+.term .ret-i { color: var(--t-set); }
+.term .ret-s { color: #a31515; }
+.term .ret-e { color: var(--brand); }
+.term .ret-n { color: var(--fg-4); }
+.term .idx { color: var(--fg-4); }
+.term .ms { color: var(--fg-4); }
+.term-input { flex: none; display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px;
+              border-top: 1px solid var(--bd); background: var(--bg-subtle);
+              font-family: var(--ff-mono-user); font-size: 12.5px; color: var(--fg); }
+/* 宽度写死是因为忙态要把 > 换成 12px 的 spinner：两者天然不等宽，
+   不定住的话每执行一条命令输入框的左边界都会跳一下 */
+.term-input .prompt { color: var(--accent); flex: none; width: 12px;
+                      display: inline-flex; align-items: center; justify-content: center; }
+.term-input input { flex: 1; min-width: 0; border: 0; background: transparent; outline: none;
+                    font: inherit; color: var(--fg); }
+.term-input input::placeholder { color: var(--fg-4); }
+
+.pane-split { width: 1px; background: var(--bd); flex: none; cursor: col-resize; }

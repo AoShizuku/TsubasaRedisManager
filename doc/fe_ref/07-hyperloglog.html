@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>07 HyperLogLog 查看器 — Tsubasa Redis Manager</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/ui.css">
+<script src="assets/proto.js" defer></script>
+<style>
+  /* 本页专用：HLL 仪表盘。大数字 32px 在 tokens 里尚无档位，实现时补一档（见页尾要点） */
+  .hllboard { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:16px 24px; }
+  .hb-cap { font-size:var(--fs-11); color:var(--fg-3); letter-spacing:.04em; }
+  .hb-num { font-family:var(--ff-mono); font-variant-numeric:tabular-nums; font-size:32px; font-weight:600; letter-spacing:-.5px; color:var(--fg); line-height:1.15; }
+  .hb-err { font-size:var(--fs-11); color:var(--fg-3); font-variant-numeric:tabular-nums; }
+  .hb-note { display:flex; gap:8px; align-items:flex-start; max-width:460px; margin-top:14px; padding:10px 12px; border:1px solid var(--bd); border-radius:var(--r-8); background:var(--bg-subtle); font-size:var(--fs-11); line-height:1.7; color:var(--fg-2); }
+  .hb-note .i { flex:none; margin-top:3px; color:var(--fg-3); }
+  .hb-note code { font-family:var(--ff-mono); font-size:10.5px; background:var(--bg-inset); padding:1px 4px; border-radius:3px; }
+  .hll-fallback { flex:1; min-height:0; display:flex; flex-direction:column; gap:10px; padding:12px 14px; }
+
+  /* ── 结构查看器（健康态抽屉 / 损坏态主体共用） ─────────── */
+  /* 头部字段的图例色：专用小色板，与 Redis 类型色无关 */
+  .hxf { padding:1px 3px; border-radius:3px; }
+  /* 原始视图里染色只改背景不改步进：水平 padding 会把等宽网格撑歪，列就对不上正文 */
+  .ed-code .hxf { padding:0; border-radius:2px; }
+  .hxf-magic { background:#dbeafe; color:#1e40af; }
+  .hxf-enc   { background:#ede9fe; color:#5b21b6; }
+  .hxf-resv  { background:#eef1f5; color:#64748b; }
+  .hxf-card  { background:#fef3c7; color:#92400e; }
+  .swb { display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:6px; }
+  .hxp { display:flex; gap:24px; padding:12px 14px; overflow:auto; flex:1; min-height:0; background:#fff; }
+  .hx-sec { min-width:0; }
+  .hx-cap { font-size:var(--fs-10); font-weight:600; letter-spacing:.05em; color:var(--fg-4); margin-bottom:7px; }
+  .hx-line { font-family:var(--ff-mono); font-size:11.5px; margin-bottom:9px; white-space:nowrap; }
+  .hxt { border-collapse:collapse; font-size:var(--fs-11); }
+  .hxt td { padding:4px 12px 4px 0; border-bottom:1px solid var(--bd); vertical-align:top; }
+  .hxt tr:last-child td { border-bottom:0; }
+  .hxt .f { color:var(--fg-2); white-space:nowrap; display:flex; align-items:center; }
+  .hxt .b { font-family:var(--ff-mono); font-size:11px; color:var(--fg-3); white-space:nowrap; }
+  .hxt .v { font-family:var(--ff-mono); font-size:11px; white-space:nowrap; }
+  .hm { image-rendering:pixelated; display:block; }
+  .hmwrap { border:1px solid var(--bd); width:min-content; line-height:0; flex:none; }
+  .hm-miss { width:192px; height:60px; background:repeating-linear-gradient(45deg,#111114,#111114 4px,#26262c 4px,#26262c 8px); }
+  .hx-stats { font-size:var(--fs-11); color:var(--fg-2); line-height:1.9; }
+  .hx-stats b { font-variant-numeric:tabular-nums; }
+  .hx-stats .dim { color:var(--fg-4); }
+  .bitstrip { display:flex; margin:3px 0 2px; }
+  .bitstrip i { width:7px; height:12px; }
+  .bitstrip i.r0 { background:#dbeafe; } .bitstrip i.r1 { background:#d1fae5; }
+  .bitstrip i.r2 { background:#fde8c8; } .bitstrip i.r3 { background:#e9d5ff; }
+  .bitstrip i.b8 { box-shadow:inset 1.5px 0 0 var(--fg-3); }
+  .bs-row { display:flex; font-size:9px; color:var(--fg-4); font-family:var(--ff-mono); }
+  .bs-row span { text-align:center; flex:none; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="pagehd">
+    <a href="index.html">← 原型索引</a>
+    <div>
+      <h1>07 · HyperLogLog 查看器</h1>
+      <div class="sub">STRING 的子形态：基数仪表盘 + 结构查看器（解析 / 原始可点击切换）；损坏态是同一查看器的降级排布。点窗口内的标签切换两种状态</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="zoomctl" data-zoom-ctl>
+      <button data-zoom="1">100%</button><button data-zoom="0.8">80%</button><button data-zoom="0.65">65%</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap"><div class="stage">
+  <div class="win">
+
+    <!-- ── 标题栏 ─────────────────────────────────────── -->
+    <div class="titlebar">
+      <div class="brand"><span class="brand-mark"></span>Tsubasa</div>
+      <span class="vsep"></span>
+      <span style="font-size:var(--fs-12);color:var(--fg-2);display:flex;align-items:center;gap:6px">
+        <span class="cdot" style="background:#d6372b"></span>prod-east
+        <svg class="i i-12" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg><span class="mono">db0</span>
+      </span>
+      <div class="omnibar"><svg class="i i-12"><use href="#i-search"/></svg>搜索 Key、连接或命令<span class="kbd">Ctrl</span><span class="kbd">K</span></div>
+      <div class="wctl">
+        <button><svg class="i i-12"><use href="#i-minus"/></svg></button>
+        <button><svg class="i i-12"><use href="#i-maximize"/></svg></button>
+        <button class="close"><svg class="i i-12"><use href="#i-x"/></svg></button>
+      </div>
+    </div>
+
+    <div class="win-body">
+
+      <!-- ── 侧栏：扁平列表模式 ────────────────────────── -->
+      <div class="side">
+        <div class="side-hd">
+          <span class="t">prod-east</span>
+          <svg class="i i-12" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+          <span class="mono" style="font-size:11.5px">db0</span>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-refresh"/></svg></button>
+        </div>
+        <div class="side-search" style="flex-direction:column;gap:8px;align-items:stretch">
+          <div style="display:flex;gap:6px">
+            <div class="input-wrap"><svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="按模式搜索 Key…"></div>
+            <button class="btn btn-icon"><svg class="i"><use href="#i-filter"/></svg></button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="seg" style="flex:none"><button>树形</button><button class="is-active">列表</button></div>
+            <span style="font-size:var(--fs-10);color:var(--fg-4)">1,286 keys</span>
+          </div>
+        </div>
+        <!-- HLL 在树里就是 string：SCAN 不做子形态识别，圆点沿用 string 的中性灰 -->
+        <div class="tree">
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">cache:page:home</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">config:features</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot stream"></span><span class="tname">events:audit</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot zset"></span><span class="tname">leaderboard:weekly</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot list"></span><span class="tname">queue:mail:pending</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">session:9f2c41ab</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot set"></span><span class="tname">user:1002:roles</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot hash"></span><span class="tname">user:profile:1002</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">uv:daily:2026-07-25</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">uv:daily:2026-07-26</span></div>
+          <div class="trow lv-key is-sel" style="--ind:0"><span class="tdot string"></span><span class="tname">uv:daily:2026-07-27</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">uv:import:2025</span></div>
+          <div class="trow-more" style="--ind:0;padding-left:8px">
+            <svg class="i i-12"><use href="#i-chevron-down"/></svg>加载更多 <span style="color:var(--fg-4)">· 已扫描 1,286</span>
+          </div>
+        </div>
+        <div class="side-ft">
+          <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-settings"/></svg></button>
+          <div class="spacer"></div>
+          <span style="font-size:var(--fs-10);color:var(--fg-4);padding-right:4px">v0.5.0</span>
+        </div>
+      </div>
+
+      <!-- ── 主区 ──────────────────────────────────────── -->
+      <div class="main">
+
+        <div class="tabbar" data-tab-group="hll">
+          <div class="tab is-active" data-tab="ok"><span class="tdot string"></span><span class="tab-name">uv:daily:2026-07-27</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tab" data-tab="bad"><span class="tdot string"></span><span class="tab-name">uv:import:2025</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tabtools"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-columns"/></svg></button></div>
+        </div>
+
+        <!-- ══ 正常态：仪表盘 + 结构抽屉 ═══════════════════ -->
+        <div data-panel-group="hll" data-panel="ok" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2>uv:daily:2026-07-27 <span class="chip string">STRING</span> <span class="tag">HyperLogLog</span></h2>
+              <div class="keymeta"><span><b>12.0 KB</b></span><span>HLL <b>dense</b></span><span>编码 <b>raw</b></span><span>prod-east / db0</span></div>
+            </div>
+            <div class="kh-act">
+              <button class="ttl" title="点击修改过期时间">
+                <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">12:18:33</span>
+                <svg class="i i-12 caret"><use href="#i-chevron-down"/></svg>
+              </button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-refresh"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-pencil"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-copy"/></svg></button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="input-wrap" style="max-width:280px">
+              <svg class="i i-12 lead"><use href="#i-plus"/></svg>
+              <input class="input mono" placeholder="添加元素，回车提交 · PFADD">
+            </div>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>添加</button>
+            <div class="spacer"></div>
+            <span style="font-size:var(--fs-11);color:var(--fg-4)">已计入的元素重复添加不会改变计数</span>
+          </div>
+
+          <div class="hllboard">
+            <div class="hb-cap">估算基数</div>
+            <div class="hb-num">1,038,422</div>
+            <div class="hb-err">标准误差 ±0.81% · 约 ±8,400</div>
+            <div class="hb-note">
+              <svg class="i i-12"><use href="#i-info"/></svg>
+              <div>HyperLogLog 以 16,384 个概率寄存器估算去重计数，<b>不存储元素本身</b>——无法列出、检索或删除已计入的成员，这里因此没有成员表。合并多个 HLL 请在 CLI 中使用 <code>PFMERGE</code>。</div>
+            </div>
+          </div>
+
+          <!-- 结构查看器：真实实现中默认收起，点头部展开 -->
+          <div class="drawer" style="height:336px">
+            <div class="drawer-hd">
+              <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-chevron-down"/></svg>
+              <span class="t">结构与原始字节</span>
+              <span class="tag">只读</span><span class="tag">GET · 12,304 B</span>
+              <div class="spacer"></div>
+              <div class="seg" data-tab-group="hexok">
+                <button class="is-active" data-tab="parsed">解析</button><button data-tab="raw">原始</button>
+              </div>
+            </div>
+
+            <!-- 解析：头部字段表 + 寄存器热力图 -->
+            <div class="hxp" data-panel-group="hexok" data-panel="parsed">
+              <div class="hx-sec" style="flex:none">
+                <div class="hx-cap">头部 · 16 B</div>
+                <div class="hx-line"><span class="hxf hxf-magic">48 59 4c 4c</span> <span class="hxf hxf-enc">00</span> <span class="hxf hxf-resv">00 00 00</span> <span class="hxf hxf-card">56 d8 0f 00 00 00 00 00</span></div>
+                <table class="hxt">
+                  <tr><td class="f"><span class="swb" style="background:#dbeafe"></span>魔数</td><td class="b">48 59 4c 4c</td><td class="v">"HYLL" ✓</td></tr>
+                  <tr><td class="f"><span class="swb" style="background:#ede9fe"></span>encoding</td><td class="b">00</td><td class="v">dense · 定长寄存器阵列</td></tr>
+                  <tr><td class="f"><span class="swb" style="background:#eef1f5"></span>保留</td><td class="b">00 00 00</td><td class="v">全零 ✓</td></tr>
+                  <tr><td class="f"><span class="swb" style="background:#fef3c7"></span>基数缓存</td><td class="b">56 d8 0f 00 00 00 00 00</td><td class="v">u64 小端 = 1,038,422<br><span style="color:var(--fg-3)">失效位（最高 bit）= 0 · 缓存可信</span></td></tr>
+                  <tr><td class="f"><span class="swb" style="background:transparent"></span>寄存器区长度</td><td class="b">—</td><td class="v">12,288 B · 与 dense 定义一致 ✓</td></tr>
+                </table>
+              </div>
+              <div class="hx-sec">
+                <div class="hx-cap">寄存器区 · 12,288 B · 16,384 × 6 bit</div>
+                <div style="display:flex;gap:16px;align-items:flex-start">
+                  <div class="hmwrap"><canvas id="hm-ok" class="hm" width="128" height="128" style="width:192px;height:192px"></canvas></div>
+                  <div class="hx-stats">
+                    非零寄存器 <b>16,384 / 16,384</b><br>
+                    最大 <b>14</b> · 平均 <b>6.3</b><br>
+                    <span class="dim">亮度 = 寄存器值，0 为纯黑</span><br>
+                    <span class="dim">均匀噪点即健康；大块纯色或条纹是损坏的形状</span>
+                    <div style="margin-top:10px">
+                      <div class="bs-row"><span style="width:56px">字节 0</span><span style="width:56px">字节 1</span><span style="width:56px">字节 2</span></div>
+                      <div class="bitstrip"><i class="r0"></i><i class="r0"></i><i class="r0"></i><i class="r0"></i><i class="r0"></i><i class="r0"></i><i class="r1"></i><i class="r1"></i><i class="r1 b8"></i><i class="r1"></i><i class="r1"></i><i class="r1"></i><i class="r2"></i><i class="r2"></i><i class="r2"></i><i class="r2 b8"></i><i class="r2"></i><i class="r2"></i><i class="r3"></i><i class="r3"></i><i class="r3"></i><i class="r3"></i><i class="r3"></i><i class="r3"></i></div>
+                      <div class="bs-row"><span style="width:42px">寄存器 0</span><span style="width:42px">1</span><span style="width:42px">2</span><span style="width:42px">3</span></div>
+                      <div class="dim" style="margin-top:4px;line-height:1.6">每 3 字节装 4 个寄存器，边界每 24 bit<br>才对齐一次——hex 在这里天然不可读</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 原始：hex + ASCII，头部保留图例底色 -->
+            <div class="editor is-hidden" data-panel-group="hexok" data-panel="raw" style="flex:1">
+              <div class="ed-gutter">0000
+0010
+0020
+0030
+0040
+0050
+&nbsp;</div>
+              <div class="ed-code"><span class="hxf hxf-magic">48 59 4c 4c</span> <span class="hxf hxf-enc">00</span> <span class="hxf hxf-resv">00 00 00</span>  <span class="hxf hxf-card">56 d8 0f 00 00 00 00 00</span>  <span class="tk-dim">HYLL....V.......</span>
+9a d3 b6 e5 8f a7 c4 92  e8 b1 d9 a3 f2 8c b7 e1  <span class="tk-dim">................</span>
+c5 9e ea b4 8d f6 a9 d2  93 e7 bc 8a d5 f1 a6 c8  <span class="tk-dim">................</span>
+b2 ed 97 da c1 a8 f4 8e  d7 b9 e3 95 ca af d8 b5  <span class="tk-dim">................</span>
+e6 8b f3 c7 9d b0 dc a4  ee 96 c3 ba 87 f5 ad d1  <span class="tk-dim">................</span>
+90 e9 bf 84 d6 ab f0 99  c9 b3 e2 a1 8f dd 94 c6  <span class="tk-dim">................</span>
+<span class="tk-dim">… 后续 12,208 B 未显示（共 12,304 B）</span></div>
+            </div>
+          </div>
+
+          <div class="toolbar" style="border-bottom:0;border-top:1px solid var(--bd);height:30px">
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">PFCOUNT · 打开与刷新时执行</span>
+            <span class="vsep"></span>
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">计数会刷新服务端头部的 8 字节基数缓存：物理字节可能变化，逻辑值不变</span>
+            <div class="spacer"></div>
+            <!-- 「只读会话：可计数，不可添加」的角标只在只读会话渲染；
+                 这里 mock 的是可写会话，所以没有它 -->
+          </div>
+        </div>
+
+        <!-- ══ 回退态：截断的 dense，同一查看器顶到主体 ═════ -->
+        <div class="is-hidden" data-panel-group="hll" data-panel="bad" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2>uv:import:2025 <span class="chip string">STRING</span> <span class="tag">HyperLogLog</span></h2>
+              <div class="keymeta"><span><b>8.27 KB</b></span><span>HLL <b>dense</b></span><span>编码 <b>raw</b></span><span>prod-east / db0</span></div>
+            </div>
+            <div class="kh-act">
+              <button class="ttl is-persist" title="点击修改过期时间">
+                <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">不过期</span>
+                <svg class="i i-12 caret"><use href="#i-chevron-down"/></svg>
+              </button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-refresh"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-pencil"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-copy"/></svg></button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="input-wrap" style="max-width:280px">
+              <svg class="i i-12 lead"><use href="#i-plus"/></svg>
+              <input class="input mono" disabled placeholder="PFADD 不可用">
+            </div>
+            <button class="btn btn-sm" disabled><svg class="i i-12"><use href="#i-plus"/></svg>添加</button>
+            <div class="spacer"></div>
+            <span class="tag tag-danger"><svg class="i i-12"><use href="#i-alert"/></svg>校验失败</span>
+          </div>
+
+          <div class="hll-fallback">
+            <div class="banner banner-danger">
+              <svg class="i i-12" style="margin-top:2px"><use href="#i-alert"/></svg>
+              <div>
+                <b>服务端拒绝按 HyperLogLog 计数</b>
+                <div class="mono" style="font-size:11px;margin-top:3px">WRONGTYPE Key is not a valid HyperLogLog string value.</div>
+                <div style="margin-top:3px">头部完好（dense），但寄存器区只有 8,448 B，应为 12,288 B——该值可能在迁移或备份恢复中被截断。以下按原始字节只读显示。</div>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:var(--fs-12);font-weight:600">结构与原始字节</span>
+              <span class="tag">只读</span><span class="tag">GET · 8,464 B</span>
+              <div class="spacer"></div>
+              <div class="seg" data-tab-group="hexbad">
+                <button class="is-active" data-tab="raw">原始</button><button data-tab="parsed">解析</button>
+              </div>
+            </div>
+
+            <!-- 原始为主：解析不了的东西，字节是唯一诚实的展示 -->
+            <div class="editor" data-panel-group="hexbad" data-panel="raw" style="flex:1">
+              <div class="ed-gutter">0000
+0010
+0020
+0030
+0040
+&nbsp;</div>
+              <div class="ed-code"><span class="hxf hxf-magic">48 59 4c 4c</span> <span class="hxf hxf-enc">00</span> <span class="hxf hxf-resv">00 00 00</span>  <span class="hxf hxf-card">8e 8a 03 00 00 00 00 80</span>  <span class="tk-dim">HYLL............</span>
+9b c4 e0 91 df b2 88 f6  d1 ca 87 c9 b3 ff a1 ed  <span class="tk-dim">................</span>
+84 d5 ee 09 02 c3 fa 8d  b0 e6 17 90 dd 04 be 99  <span class="tk-dim">................</span>
+c2 a9 d5 aa 8b ef f0 9c  9e 03 e2 4b 07 c8 b6 91  <span class="tk-dim">...........K....</span>
+d8 87 f2 b5 e9 90 ce a3  ff b8 d4 8c e7 9a c1 af  <span class="tk-dim">................</span>
+<span class="tk-dim">… 后续 8,384 B 未显示（共 8,464 B · 完整 dense 应为 12,304 B）</span></div>
+            </div>
+
+            <!-- 解析为辅：头部逐字段 ✓/✗，热力图把截断显形 -->
+            <div class="hxp is-hidden" data-panel-group="hexbad" data-panel="parsed" style="border:1px solid var(--bd);border-radius:var(--r-6)">
+              <div class="hx-sec" style="flex:none">
+                <div class="hx-cap">头部 · 16 B</div>
+                <div class="hx-line"><span class="hxf hxf-magic">48 59 4c 4c</span> <span class="hxf hxf-enc">00</span> <span class="hxf hxf-resv">00 00 00</span> <span class="hxf hxf-card">8e 8a 03 00 00 00 00 80</span></div>
+                <table class="hxt">
+                  <tr><td class="f"><span class="swb" style="background:#dbeafe"></span>魔数</td><td class="b">48 59 4c 4c</td><td class="v">"HYLL" ✓</td></tr>
+                  <tr><td class="f"><span class="swb" style="background:#ede9fe"></span>encoding</td><td class="b">00</td><td class="v">dense · 定长寄存器阵列</td></tr>
+                  <tr><td class="f"><span class="swb" style="background:#eef1f5"></span>保留</td><td class="b">00 00 00</td><td class="v">全零 ✓</td></tr>
+                  <tr><td class="f"><span class="swb" style="background:#fef3c7"></span>基数缓存</td><td class="b">8e 8a 03 00 00 00 00 80</td><td class="v">u64 小端 = 232,078<br><span style="color:var(--fg-3)">失效位（最高 bit）= 1 · 缓存不可信</span></td></tr>
+                  <tr><td class="f"><span class="swb" style="background:transparent"></span>寄存器区长度</td><td class="b">—</td><td class="v" style="color:var(--brand)">8,448 B · 应为 12,288 B ✗</td></tr>
+                </table>
+              </div>
+              <div class="hx-sec">
+                <div class="hx-cap">寄存器区 · 8,448 B / 12,288 B · 缺失 3,840 B</div>
+                <div style="display:flex;gap:16px;align-items:flex-start">
+                  <div class="hmwrap"><canvas id="hm-bad" class="hm" width="128" height="88" style="width:192px;height:132px"></canvas><div class="hm-miss"></div></div>
+                  <div class="hx-stats">
+                    有效寄存器 <b>11,264 / 16,384</b><br>
+                    缺失 <b>5,120</b><span class="dim">（尾部 3,840 B 被截断）</span><br>
+                    <span class="dim">上方噪点区数据正常，</span><br>
+                    <span class="dim">斜纹带 = 截断缺失的部分</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;height:22px">
+              <span style="font-size:var(--fs-11);color:var(--fg-3)">显示前 80 B / 共 8,464 B</span>
+              <div class="spacer"></div>
+              <span style="font-size:var(--fs-11);color:var(--fg-4)">查看器不提供保存——改写原始字节请使用 CLI（GET / SET）</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 状态栏 ─────────────────────────────────────── -->
+    <div class="statusbar">
+      <span class="sb"><span class="dot dot-ok"></span>prod-east · 已连接</span>
+      <span class="sb-sep"></span>
+      <span class="sb">Redis 7.2.4</span>
+      <span class="sb-sep"></span>
+      <span class="sb">内存 2.31 GB / 4.00 GB</span>
+      <div class="spacer"></div>
+      <span class="sb">db0 · 1,286 keys</span>
+    </div>
+
+  </div>
+  </div></div>
+
+  <div class="note">
+    <b>设计要点</b>
+    <ul>
+      <li><b>子形态而非第七种类型</b>：<code>TYPE</code> 返回的就是 string，树与标签页的圆点、元信息头的徽标一律沿用 STRING 的中性灰，仅加一枚中性 tag「HyperLogLog」。识别在打开 key 时完成：<code>redis_get_key_meta</code> 第二批 pipeline 顺带 <code>GETRANGE key 0 15</code> 校验 <code>HYLL</code> 头，零额外往返；SCAN 不识别（为罕见子形态给全部 string 翻倍探测成本，不划算）。</li>
+      <li><b>结构查看器是一个组件的两种排布</b>：健康态 = 底部抽屉（真实实现默认收起），解析为主、原始为辅；损坏态 = 顶到主体，原始为主、banner 说明、解析降级为逐字段 ✓/✗（头部往往还是好的，坏的只是长度或操作码）。「校验失败」不是孤立页面，是同一查看器的退化档位。</li>
+      <li><b>热力图是寄存器区的本体表示，不是彩蛋</b>：一寄存器一像素（128 × 128）、灰度、0 为纯黑，均匀噪点即健康，色块与条纹是损坏的形状。服务端对 dense 只校验总长度——长度合法而寄存器是垃圾的 HLL 不会报错，只会安静给错数，这类损坏唯有热力图能显形。sparse 由后端展开成同一个 16,384 数组后同样适用。canvas 原生绘制，零依赖。<b>解说词按非零率分档</b>：低于一成时画面以纯黑为主是常态，换用「亮点 = 被命中的寄存器」的低基数解说，「大块纯色是损坏」那套噪点语法只在高填充时展示——否则健康的小 HLL 会被读成坏的；「平均」低填充时不显示（四舍五入成 0.0 没有信息量）。6-bit 跨界示意只对 dense 成立（sparse 的字节是操作码流），只在 dense 显示。</li>
+      <li><b>后端一条读命令 <code>redis_inspect_hll</code></b>：Rust 解析头部并把寄存器展开为规范数组返回——6-bit 解包与 sparse 的 ZERO/XZERO/VAL 操作码是 Redis 实现知识，按 doc/architecture.md「前后端分层」归 Rust。原始字节走现有 <code>redis_get_string_value</code>（dense 12,304 B 低于 64 KiB 截断线，天然完整）。</li>
+      <li><b>染色是专用图例色</b>（魔数 / encoding / 保留 / 基数缓存四色），不动 Redis 类型色；hex 里的底色与字段表的色块同色对照。<b>BIN 不做整列</b>——bit 级信息只在两处承重：基数缓存的最高位失效标记（字段表里单独标出）、6-bit 与字节边界的错位（寄存器区旁的三字节小示意图）。</li>
+      <li><b>PFCOUNT 的副作用写在状态行上</b>：它会刷新头部 8 字节基数缓存——物理字节可能变化，逻辑值不变。ACL 归类 <code>@read</code>，只读会话照常计数，PFADD 才受只读约束。「只读会话：可计数，不可添加」的角标<b>只在只读会话渲染</b>——对可写会话陈述「不可添加」是假命题，本页 mock 的是可写会话所以没有它。<b>PFMERGE 不进界面</b>：跨 key、集群受 CROSSSLOT 约束、低频，CLI 是正当入口。</li>
+      <li>大数字 32px 在 tokens 中尚无档位，实现时在 <code>src/styles/tokens.css</code> 补一档（如 <code>--fs-32</code>）；数字必须 <code>tabular-nums</code>。热力图放大用 <code>image-rendering: pixelated</code>，保持像素边界。</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+/* 寄存器热力图：LCG 定种子，近似 dense 分布（百万基数下寄存器值集中在 4–11） */
+document.addEventListener('DOMContentLoaded', () => {
+  function lcg(seed) {
+    let s = seed >>> 0;
+    return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+  }
+  function paint(id, rows, seed) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const img = ctx.createImageData(128, rows);
+    const rnd = lcg(seed);
+    for (let i = 0; i < 128 * rows; i++) {
+      let v = 4 + Math.floor(rnd() * 4) + Math.floor(rnd() * 4);
+      if (rnd() < 0.02) v += 1 + Math.floor(rnd() * 3);
+      const lum = Math.round(34 + (Math.min(v, 15) / 15) * 196);
+      img.data[i * 4] = lum; img.data[i * 4 + 1] = lum; img.data[i * 4 + 2] = lum; img.data[i * 4 + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  paint('hm-ok', 128, 20260727);
+  paint('hm-bad', 88, 8464);
+});
+</script>
+</body>
+</html>

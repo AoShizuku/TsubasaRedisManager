@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>05 Key 类型查看器 — Tsubasa Redis Manager</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/ui.css">
+<script src="assets/proto.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <div class="pagehd">
+    <a href="index.html">← 原型索引</a>
+    <div>
+      <h1>05 · Key 打开后的显示样式</h1>
+      <div class="sub">点击窗口内的标签切换 STRING / HASH / LIST / SET / ZSET / STREAM / CLI</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="zoomctl" data-zoom-ctl>
+      <button data-zoom="1">100%</button><button data-zoom="0.8">80%</button><button data-zoom="0.65">65%</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap"><div class="stage">
+  <div class="win">
+
+    <!-- ── 标题栏 ─────────────────────────────────────── -->
+    <div class="titlebar">
+      <div class="brand"><span class="brand-mark"></span>Tsubasa</div>
+      <span class="vsep"></span>
+      <span style="font-size:var(--fs-12);color:var(--fg-2);display:flex;align-items:center;gap:6px">
+        <span class="cdot" style="background:#d6372b"></span>prod-east
+        <svg class="i i-12" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg><span class="mono">db0</span>
+      </span>
+      <div class="omnibar"><svg class="i i-12"><use href="#i-search"/></svg>搜索 Key、连接或命令<span class="kbd">Ctrl</span><span class="kbd">K</span></div>
+      <div class="wctl">
+        <button><svg class="i i-12"><use href="#i-minus"/></svg></button>
+        <button><svg class="i i-12"><use href="#i-maximize"/></svg></button>
+        <button class="close"><svg class="i i-12"><use href="#i-x"/></svg></button>
+      </div>
+    </div>
+
+    <div class="win-body">
+
+      <!-- ── 侧栏：扁平列表模式 ────────────────────────── -->
+      <div class="side">
+        <div class="side-hd">
+          <span class="t">prod-east</span>
+          <svg class="i i-12" style="color:var(--fg-4)"><use href="#i-chevron-right"/></svg>
+          <span class="mono" style="font-size:11.5px">db0</span>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-refresh"/></svg></button>
+        </div>
+        <div class="side-search" style="flex-direction:column;gap:8px;align-items:stretch">
+          <div style="display:flex;gap:6px">
+            <div class="input-wrap"><svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="按模式搜索 Key…"></div>
+            <button class="btn btn-icon"><svg class="i"><use href="#i-filter"/></svg></button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="seg" style="flex:none"><button>树形</button><button class="is-active">列表</button></div>
+            <span style="font-size:var(--fs-10);color:var(--fg-4)">1,284 keys</span>
+          </div>
+        </div>
+        <div class="tree">
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">config:features</span></div>
+          <div class="trow lv-key is-sel" style="--ind:0"><span class="tdot hash"></span><span class="tname">user:profile:1002</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot list"></span><span class="tname">queue:mail:pending</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot set"></span><span class="tname">user:1002:roles</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot zset"></span><span class="tname">order:2026:0715</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot stream"></span><span class="tname">events:audit</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">session:9f2c41ab</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot hash"></span><span class="tname">user:profile:1003</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot string"></span><span class="tname">cache:page:home</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot list"></span><span class="tname">queue:sms:pending</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot set"></span><span class="tname">feature:beta:users</span></div>
+          <div class="trow lv-key" style="--ind:0"><span class="tdot zset"></span><span class="tname">leaderboard:weekly</span></div>
+          <div class="trow-more" style="--ind:0;padding-left:8px">
+            <svg class="i i-12"><use href="#i-chevron-down"/></svg>加载更多 <span style="color:var(--fg-4)">· 已扫描 1,284</span>
+          </div>
+        </div>
+        <div class="side-ft">
+          <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-settings"/></svg></button>
+          <div class="spacer"></div>
+          <span style="font-size:var(--fs-10);color:var(--fg-4);padding-right:4px">v0.1.0</span>
+        </div>
+      </div>
+
+      <!-- ── 主区 ──────────────────────────────────────── -->
+      <div class="main">
+
+        <div class="tabbar" data-tab-group="kv">
+          <div class="tab" data-tab="string"><span class="tdot string"></span><span class="tab-name">config:features</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tab is-active" data-tab="hash"><span class="tdot hash"></span><span class="tab-name">user:profile:1002</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tab" data-tab="list"><span class="tdot list"></span><span class="tab-name">queue:mail:pending</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tab" data-tab="set"><span class="tdot set"></span><span class="tab-name">user:1002:roles</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tab" data-tab="zset"><span class="tdot zset"></span><span class="tab-name">order:2026:0715</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tab" data-tab="stream"><span class="tdot stream"></span><span class="tab-name">events:audit</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tab" data-tab="cli"><svg class="i i-12" style="color:var(--fg-3)"><use href="#i-terminal"/></svg><span class="tab-name">CLI</span><span class="tab-x"><svg class="i i-12"><use href="#i-x"/></svg></span></div>
+          <div class="tabtools"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-columns"/></svg></button></div>
+        </div>
+
+        <!-- ══ STRING ══════════════════════════════════ -->
+        <div class="is-hidden" data-panel-group="kv" data-panel="string" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2>config:features <span class="chip string">STRING</span></h2>
+              <div class="keymeta"><span><b>1.41 KB</b></span><span>编码 <b>raw</b></span><span>prod-east / db0</span></div>
+            </div>
+            <div class="kh-act">
+              <button class="ttl is-persist" title="点击修改过期时间">
+                <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">不过期</span>
+                <svg class="i i-12 caret"><use href="#i-chevron-down"/></svg>
+              </button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-refresh"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-pencil"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-copy"/></svg></button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="seg">
+              <button>文本</button><button class="is-active">JSON</button><button>Hex</button>
+              <button>Binary</button><button>MsgPack</button><button>Protobuf</button><button>自定义…</button>
+            </div>
+            <span class="tag tag-ok"><svg class="i i-12"><use href="#i-wand"/></svg>自动识别 JSON</span>
+            <div class="spacer"></div>
+            <div class="input-wrap" style="max-width:180px">
+              <svg class="i i-12 lead"><use href="#i-search"/></svg>
+              <input class="input" placeholder="在值内搜索">
+            </div>
+            <button class="btn btn-ghost btn-icon btn-sm" title="格式化"><svg class="i"><use href="#i-braces"/></svg></button>
+            <button class="btn btn-sm btn-primary"><svg class="i i-12"><use href="#i-save"/></svg>保存</button>
+          </div>
+          <div class="editor">
+            <div class="ed-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</div>
+            <div class="ed-code"><span class="tk-pun">{</span>
+  <span class="tk-key">"version"</span><span class="tk-pun">:</span> <span class="tk-num">14</span><span class="tk-pun">,</span>
+  <span class="tk-key">"updatedAt"</span><span class="tk-pun">:</span> <span class="tk-str">"2026-07-25T09:41:02Z"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"flags"</span><span class="tk-pun">:</span> <span class="tk-pun">{</span>
+    <span class="tk-key">"newCheckout"</span><span class="tk-pun">:</span> <span class="tk-bool">true</span><span class="tk-pun">,</span>
+    <span class="tk-key">"asyncExport"</span><span class="tk-pun">:</span> <span class="tk-bool">true</span><span class="tk-pun">,</span>
+    <span class="tk-key">"legacyProfile"</span><span class="tk-pun">:</span> <span class="tk-bool">false</span><span class="tk-pun">,</span>
+    <span class="tk-key">"rateLimitRps"</span><span class="tk-pun">:</span> <span class="tk-num">1200</span>
+  <span class="tk-pun">},</span>
+  <span class="tk-key">"rollout"</span><span class="tk-pun">:</span> <span class="tk-pun">[</span>
+    <span class="tk-pun">{</span> <span class="tk-key">"region"</span><span class="tk-pun">:</span> <span class="tk-str">"east"</span><span class="tk-pun">,</span> <span class="tk-key">"percent"</span><span class="tk-pun">:</span> <span class="tk-num">100</span> <span class="tk-pun">},</span>
+    <span class="tk-pun">{</span> <span class="tk-key">"region"</span><span class="tk-pun">:</span> <span class="tk-str">"west"</span><span class="tk-pun">,</span> <span class="tk-key">"percent"</span><span class="tk-pun">:</span> <span class="tk-num">45</span> <span class="tk-pun">},</span>
+    <span class="tk-pun">{</span> <span class="tk-key">"region"</span><span class="tk-pun">:</span> <span class="tk-str">"eu"</span><span class="tk-pun">,</span> <span class="tk-key">"percent"</span><span class="tk-pun">:</span> <span class="tk-num">0</span> <span class="tk-pun">}</span>
+  <span class="tk-pun">],</span>
+  <span class="tk-key">"owners"</span><span class="tk-pun">:</span> <span class="tk-pun">[</span><span class="tk-str">"platform"</span><span class="tk-pun">,</span> <span class="tk-str">"growth"</span><span class="tk-pun">],</span>
+  <span class="tk-key">"notes"</span><span class="tk-pun">:</span> <span class="tk-str">"eu 区待合规评审后开启"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"checksum"</span><span class="tk-pun">:</span> <span class="tk-str">"8f14e45fceea167a5a36dedd4bea2543"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"source"</span><span class="tk-pun">:</span> <span class="tk-str">"config-service"</span>
+<span class="tk-pun">}</span></div>
+          </div>
+          <div class="toolbar" style="border-bottom:0;border-top:1px solid var(--bd);height:30px">
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">行 12，列 34</span>
+            <span class="vsep"></span>
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">UTF-8 · LF · 1,412 字节</span>
+            <div class="spacer"></div>
+            <span class="tag">未修改</span>
+          </div>
+        </div>
+
+        <!-- ══ HASH ════════════════════════════════════ -->
+        <div data-panel-group="kv" data-panel="hash" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2>user:profile:1002 <span class="chip hash">HASH</span></h2>
+              <div class="keymeta"><span><b>9</b> 字段</span><span><b>1.24 KB</b></span><span>编码 <b>listpack</b></span><span>prod-east / db0</span></div>
+            </div>
+            <div class="kh-act">
+              <button class="ttl" title="点击修改过期时间">
+                <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">23:41:07</span>
+                <svg class="i i-12 caret"><use href="#i-chevron-down"/></svg>
+              </button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-refresh"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-pencil"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-copy"/></svg></button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="input-wrap" style="max-width:236px"><svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="在 9 个字段中筛选…"></div>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>添加字段</button>
+            <div class="spacer"></div>
+            <div class="seg"><button class="is-active">表格</button><button>JSON</button><button>原始</button></div>
+            <span class="vsep"></span>
+            <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-sliders"/></svg></button>
+            <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-expand"/></svg></button>
+          </div>
+          <div class="tablewrap">
+            <table class="dt">
+              <colgroup><col style="width:46px"><col style="width:200px"><col><col style="width:96px"></colgroup>
+              <thead><tr><th class="r">#</th><th>字段</th><th>值</th><th class="r">操作</th></tr></thead>
+              <tbody>
+                <tr><td class="idx">1</td><td class="k">name</td><td class="v">Alice Zhang</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">2</td><td class="k">email</td><td class="v">alice.zhang@example.com</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">3</td><td class="k">status</td><td class="v">active</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">4</td><td class="k">avatar</td><td class="v">https://cdn.example.com/avatar/1002.webp</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">5</td><td class="k">tier</td><td class="v">gold</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr class="is-sel"><td class="idx">6</td><td class="k">settings</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"theme":"light","density":"compact","sidebarWidth":268,"pinned":["user","order"]}</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">7</td><td class="k">payload</td><td><span class="vprev"><span class="vtag">GZIP</span><span class="v clip" style="color:var(--fg-4)">1f 8b 08 00 00 00 00 00 00 0a ed 5d 6b 73 db 38 … (3.1 KB)</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">8</td><td class="k">lastLoginAt</td><td class="v">1753412480 <span style="color:var(--fg-4)">· 2026-07-25 10:21:20</span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">9</td><td class="k">tags</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">["beta","internal","early-access"]</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="drawer">
+            <div class="drawer-hd">
+              <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-chevron-down"/></svg>
+              <span class="t">值详情</span><span class="mono" style="color:var(--fg-3)">settings</span><span class="tag">231 B</span>
+              <div class="spacer"></div>
+              <span class="tag tag-ok"><svg class="i i-12"><use href="#i-wand"/></svg>自动识别 JSON</span>
+              <div class="seg"><button>文本</button><button class="is-active">JSON</button><button>Hex</button><button>Binary</button><button>自定义…</button></div>
+              <span class="vsep"></span>
+              <button class="btn btn-sm btn-primary"><svg class="i i-12"><use href="#i-save"/></svg>保存</button>
+            </div>
+            <div class="drawer-body">
+              <div class="editor">
+                <div class="ed-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9</div>
+                <div class="ed-code"><span class="tk-pun">{</span>
+  <span class="tk-key">"theme"</span><span class="tk-pun">:</span> <span class="tk-str">"light"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"density"</span><span class="tk-pun">:</span> <span class="tk-str">"compact"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"sidebarWidth"</span><span class="tk-pun">:</span> <span class="tk-num">268</span><span class="tk-pun">,</span>
+  <span class="tk-key">"notifications"</span><span class="tk-pun">:</span> <span class="tk-bool">true</span><span class="tk-pun">,</span>
+  <span class="tk-key">"pinned"</span><span class="tk-pun">:</span> <span class="tk-pun">[</span>
+    <span class="tk-str">"user"</span><span class="tk-pun">,</span> <span class="tk-str">"order"</span>
+  <span class="tk-pun">]</span>
+<span class="tk-pun">}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ LIST ════════════════════════════════════ -->
+        <div class="is-hidden" data-panel-group="kv" data-panel="list" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2>queue:mail:pending <span class="chip list">LIST</span></h2>
+              <div class="keymeta"><span><b>128,402</b> 元素</span><span><b>6.14 MB</b></span><span>编码 <b>quicklist</b></span><span>prod-east / db0</span></div>
+            </div>
+            <div class="kh-act">
+              <button class="ttl is-persist" title="点击修改过期时间">
+                <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">不过期</span>
+                <svg class="i i-12 caret"><use href="#i-chevron-down"/></svg>
+              </button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-refresh"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-pencil"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-copy"/></svg></button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">跳转到</span>
+            <input class="input mono w-88" value="0" style="height:24px">
+            <span style="font-size:var(--fs-11);color:var(--fg-4)">/ 128,401</span>
+            <span class="vsep"></span>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>头部插入</button>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>尾部追加</button>
+            <div class="spacer"></div>
+            <div class="input-wrap" style="max-width:180px"><svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="在已加载区间筛选"></div>
+            <div class="seg"><button class="is-active">表格</button><button>原始</button></div>
+          </div>
+          <div class="tablewrap">
+            <table class="dt">
+              <colgroup><col style="width:74px"><col><col style="width:96px"></colgroup>
+              <thead><tr><th class="r">索引</th><th>值</th><th class="r">操作</th></tr></thead>
+              <tbody>
+                <tr class="is-sel"><td class="idx">0</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"id":"m-8842013","to":"alice.zhang@example.com","tpl":"order_shipped","retry":0,"enqueuedAt":1753412480}</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">1</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"id":"m-8842014","to":"bob@example.com","tpl":"password_reset","retry":0,"enqueuedAt":1753412481}</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">2</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"id":"m-8842015","to":"carol@example.com","tpl":"weekly_digest","retry":2,"enqueuedAt":1753412483}</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">3</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"id":"m-8842016","to":"dave@example.com","tpl":"order_shipped","retry":0,"enqueuedAt":1753412486}</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">4</td><td><span class="vprev"><span class="vtag">BROTLI</span><span class="v clip" style="color:var(--fg-4)">1b 4e 00 00 8c 95 9a d2 fb 41 …  (12.4 KB)</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">5</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"id":"m-8842018","to":"erin@example.com","tpl":"invoice","retry":1,"enqueuedAt":1753412491}</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">6</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"id":"m-8842019","to":"frank@example.com","tpl":"order_shipped","retry":0,"enqueuedAt":1753412495}</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">7</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"id":"m-8842020","to":"grace@example.com","tpl":"weekly_digest","retry":0,"enqueuedAt":1753412498}</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="toolbar" style="border-bottom:0;border-top:1px solid var(--bd)">
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">已加载 <b class="num">200</b> / 128,402</span>
+            <span class="pbar" style="width:120px"><i style="width:2%"></i></span>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-chevron-down"/></svg>再加载 200 条</button>
+            <div class="spacer"></div>
+            <span style="font-size:var(--fs-11);color:var(--fg-4)">虚拟滚动 · 只渲染可见行</span>
+          </div>
+          <div class="drawer" style="height:172px">
+            <div class="drawer-hd">
+              <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-chevron-down"/></svg>
+              <span class="t">值详情</span><span class="mono" style="color:var(--fg-3)">索引 0</span>
+              <div class="spacer"></div>
+              <div class="seg"><button>文本</button><button class="is-active">JSON</button><button>Hex</button><button>MsgPack</button></div>
+              <span class="vsep"></span>
+              <button class="btn btn-sm btn-primary"><svg class="i i-12"><use href="#i-save"/></svg>保存</button>
+            </div>
+            <div class="drawer-body">
+              <div class="editor">
+                <div class="ed-gutter">1
+2
+3
+4
+5
+6
+7</div>
+                <div class="ed-code"><span class="tk-pun">{</span>
+  <span class="tk-key">"id"</span><span class="tk-pun">:</span> <span class="tk-str">"m-8842013"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"to"</span><span class="tk-pun">:</span> <span class="tk-str">"alice.zhang@example.com"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"tpl"</span><span class="tk-pun">:</span> <span class="tk-str">"order_shipped"</span><span class="tk-pun">,</span>
+  <span class="tk-key">"retry"</span><span class="tk-pun">:</span> <span class="tk-num">0</span><span class="tk-pun">,</span>
+  <span class="tk-key">"enqueuedAt"</span><span class="tk-pun">:</span> <span class="tk-num">1753412480</span>
+<span class="tk-pun">}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ SET ═════════════════════════════════════ -->
+        <div class="is-hidden" data-panel-group="kv" data-panel="set" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2>user:1002:roles <span class="chip set">SET</span></h2>
+              <div class="keymeta"><span><b>7</b> 成员</span><span><b>168 B</b></span><span>编码 <b>listpack</b></span><span>prod-east / db0</span></div>
+            </div>
+            <div class="kh-act">
+              <button class="ttl is-soon" title="47 秒后过期">
+                <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">00:47</span>
+                <svg class="i i-12 caret"><use href="#i-chevron-down"/></svg>
+              </button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-refresh"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-pencil"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-copy"/></svg></button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="input-wrap" style="max-width:236px"><svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="SSCAN 匹配模式，例如 admin:*"></div>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>添加成员</button>
+            <div class="spacer"></div>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-download"/></svg>导出</button>
+            <div class="seg"><button class="is-active">表格</button><button>JSON 数组</button></div>
+          </div>
+          <div class="tablewrap">
+            <table class="dt">
+              <colgroup><col style="width:56px"><col><col style="width:96px"></colgroup>
+              <thead><tr><th class="r">#</th><th>成员</th><th class="r">操作</th></tr></thead>
+              <tbody>
+                <tr><td class="idx">1</td><td class="k">admin</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">2</td><td class="k">billing:read</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr class="is-sel"><td class="idx">3</td><td class="k">billing:write</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">4</td><td class="k">support</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">5</td><td class="k">beta-tester</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">6</td><td class="k">export:async</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">7</td><td class="k">audit:read</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="toolbar" style="border-bottom:0;border-top:1px solid var(--bd)">
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">全部 7 个成员已加载</span>
+            <div class="spacer"></div>
+            <span style="font-size:var(--fs-11);color:var(--fg-4)">成员超过 500 时改用 SSCAN 分批加载</span>
+          </div>
+        </div>
+
+        <!-- ══ ZSET ════════════════════════════════════ -->
+        <div class="is-hidden" data-panel-group="kv" data-panel="zset" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2>order:2026:0715 <span class="chip zset">ZSET</span></h2>
+              <div class="keymeta"><span><b>4,812</b> 成员</span><span><b>312 KB</b></span><span>分数区间 <b>1.0 – 9,842.5</b></span><span>prod-east / db0</span></div>
+            </div>
+            <div class="kh-act">
+              <button class="ttl" title="点击修改过期时间" style="border-color:var(--accent);box-shadow:var(--ring)">
+                <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">6d 04:12:33</span>
+                <svg class="i i-12 caret"><use href="#i-chevron-up"/></svg>
+              </button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-refresh"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-pencil"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-copy"/></svg></button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">分数</span>
+            <input class="input mono w-88" value="-inf" style="height:24px">
+            <span style="color:var(--fg-4)">–</span>
+            <input class="input mono w-88" value="+inf" style="height:24px">
+            <span class="vsep"></span>
+            <div class="seg">
+              <button class="is-active"><svg class="i i-12" style="display:inline;vertical-align:-2px"><use href="#i-sort"/></svg> 分数降序</button>
+              <button>分数升序</button><button>字典序</button>
+            </div>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>添加成员</button>
+            <div class="spacer"></div>
+            <div class="input-wrap" style="max-width:160px"><svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="筛选成员"></div>
+          </div>
+          <div class="tablewrap">
+            <table class="dt">
+              <colgroup><col style="width:56px"><col style="width:132px"><col><col style="width:96px"></colgroup>
+              <thead><tr><th class="r">#</th><th class="r">分数</th><th>成员</th><th class="r">操作</th></tr></thead>
+              <tbody>
+                <tr class="is-sel"><td class="idx">1</td><td class="r k num">9842.50</td><td class="v">order:88213:vip</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">2</td><td class="r k num">8104.00</td><td class="v">order:88109:vip</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">3</td><td class="r k num">7733.25</td><td class="v">order:87994:std</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">4</td><td class="r k num">6520.00</td><td class="v">order:87812:std</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">5</td><td class="r k num">6018.75</td><td class="v">order:87745:std</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">6</td><td class="r k num">5490.00</td><td class="v">order:87601:std</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">7</td><td class="r k num">4877.10</td><td class="v">order:87588:promo</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">8</td><td class="r k num">4102.00</td><td class="v">order:87433:std</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">9</td><td class="r k num">3960.40</td><td class="v">order:87390:promo</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">10</td><td class="r k num">3712.00</td><td class="v">order:87221:std</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">11</td><td class="r k num">3488.90</td><td class="v">order:87104:std</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">12</td><td class="r k num">3201.50</td><td class="v">order:86988:promo</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td class="idx">13</td><td class="r k num">2940.00</td><td class="v">order:86877:std</td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-pencil"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="toolbar" style="border-bottom:0;border-top:1px solid var(--bd)">
+            <span style="font-size:var(--fs-11);color:var(--fg-3)">已加载 <b class="num">200</b> / 4,812</span>
+            <span class="pbar" style="width:120px"><i style="width:4%"></i></span>
+            <button class="btn btn-sm"><svg class="i i-12"><use href="#i-chevron-down"/></svg>再加载 200 条</button>
+            <div class="spacer"></div>
+            <span style="font-size:var(--fs-11);color:var(--fg-4)">ZRANGEBYSCORE · 修改分数使用 ZADD XX</span>
+          </div>
+
+          <!-- TTL 编辑浮层：锚定在上方 TTL chip，高频低风险操作不用模态 -->
+          <div class="pop" style="right:136px;top:113px">
+            <div class="pop-hd">过期时间</div>
+            <div class="pop-body">
+              <label class="pop-opt">
+                <span class="radio"></span>不过期
+                <span class="spacer"></span>
+                <span class="mono" style="font-size:10px;color:var(--fg-4)">PERSIST</span>
+              </label>
+              <label class="pop-opt">
+                <span class="radio on"></span>相对
+                <input class="input mono" style="width:70px;height:24px" value="7">
+                <div class="select"><input class="input" style="width:62px;height:24px" value="天"><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></div>
+              </label>
+              <label class="pop-opt">
+                <span class="radio"></span>绝对
+                <input class="input mono" style="flex:1;min-width:0;height:24px" value="2026-08-01 10:21">
+              </label>
+              <div style="display:flex;align-items:center;gap:5px;padding-top:2px">
+                <span style="font-size:var(--fs-10);color:var(--fg-4);margin-right:2px">快捷</span>
+                <button class="chipbtn">5分</button><button class="chipbtn">1时</button>
+                <button class="chipbtn">1天</button><button class="chipbtn">7天</button><button class="chipbtn">30天</button>
+              </div>
+            </div>
+            <div class="pop-note">
+              到期于 <b class="mono">2026-08-01 10:21:20</b>
+              <span class="cmd">EXPIRE order:2026:0715 604800</span>
+            </div>
+            <div class="pop-ft">
+              <span class="spacer"></span>
+              <button class="btn btn-sm">取消</button>
+              <button class="btn btn-sm btn-primary">应用</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ STREAM ══════════════════════════════════ -->
+        <div class="is-hidden" data-panel-group="kv" data-panel="stream" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2>events:audit <span class="chip stream">STREAM</span></h2>
+              <div class="keymeta">
+                <span><b>2,481</b> 条</span><span><b>1.86 MB</b></span>
+                <span>首 <b class="mono">1753312001-0</b></span><span>末 <b class="mono">1753412498-3</b></span><span><b>3</b> 个消费者组</span>
+              </div>
+            </div>
+            <div class="kh-act">
+              <button class="ttl is-persist" title="点击修改过期时间">
+                <svg class="i i-12"><use href="#i-clock"/></svg><span class="val">不过期</span>
+                <svg class="i i-12 caret"><use href="#i-chevron-down"/></svg>
+              </button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-refresh"/></svg></button>
+              <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-copy"/></svg></button>
+              <span class="vsep"></span>
+              <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+
+          <div class="subtabs" data-tab-group="stream">
+            <div class="subtab is-active" data-tab="entries">消息 <span class="count-pill">2,481</span></div>
+            <div class="subtab" data-tab="groups">消费者组 <span class="count-pill">3</span></div>
+            <div class="subtab" data-tab="consumers">消费者 <span class="count-pill">7</span></div>
+          </div>
+
+          <!-- 消息 -->
+          <div data-panel-group="stream" data-panel="entries" style="flex:1;display:flex;flex-direction:column;min-height:0">
+            <div class="toolbar">
+              <span style="font-size:var(--fs-11);color:var(--fg-3)">ID 区间</span>
+              <input class="input mono w-120" value="-" style="height:24px">
+              <span style="color:var(--fg-4)">–</span>
+              <input class="input mono w-120" value="+" style="height:24px">
+              <div class="seg"><button class="is-active">最新在前</button><button>最早在前</button></div>
+              <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>追加消息</button>
+              <div class="spacer"></div>
+              <button class="btn btn-sm"><svg class="i i-12"><use href="#i-play"/></svg>实时跟随</button>
+            </div>
+            <div class="tablewrap">
+              <table class="dt">
+                <colgroup><col style="width:170px"><col style="width:150px"><col><col style="width:74px"></colgroup>
+                <thead><tr><th>ID</th><th>时间</th><th>字段</th><th class="r">操作</th></tr></thead>
+                <tbody>
+                  <tr class="is-sel"><td class="k">1753412498-3</td><td class="muted">10:21:38.003</td>
+                    <td><span class="vprev"><span class="vtag">6 字段</span><span class="v clip">actor=svc-billing action=refund.create target=order:88213 amount=248.00 …</span></span></td>
+                    <td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                  <tr><td class="k">1753412498-2</td><td class="muted">10:21:38.002</td><td><span class="vprev"><span class="vtag">5 字段</span><span class="v clip">actor=u:1002 action=login.success ip=10.4.22.9 ua=Chrome/141 …</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                  <tr><td class="k">1753412495-0</td><td class="muted">10:21:35.000</td><td><span class="vprev"><span class="vtag">7 字段</span><span class="v clip">actor=svc-order action=order.ship target=order:87994 carrier=sf …</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                  <tr><td class="k">1753412491-1</td><td class="muted">10:21:31.001</td><td><span class="vprev"><span class="vtag">4 字段</span><span class="v clip">actor=u:1188 action=profile.update field=email</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                  <tr><td class="k">1753412486-0</td><td class="muted">10:21:26.000</td><td><span class="vprev"><span class="vtag">5 字段</span><span class="v clip">actor=svc-auth action=token.revoke target=u:1044 reason=rotation</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                  <tr><td class="k">1753412483-2</td><td class="muted">10:21:23.002</td><td><span class="vprev"><span class="vtag">6 字段</span><span class="v clip">actor=admin:7 action=config.publish version=14 flags=newCheckout …</span></span></td><td><div class="rowact"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="drawer" style="height:190px">
+              <div class="drawer-hd">
+                <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-chevron-down"/></svg>
+                <span class="t">消息详情</span><span class="mono" style="color:var(--fg-3)">1753412498-3</span>
+                <div class="spacer"></div>
+                <div class="seg"><button class="is-active">字段表</button><button>JSON</button><button>原始</button></div>
+                <span class="vsep"></span>
+                <button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-copy"/></svg></button>
+              </div>
+              <div class="drawer-body">
+                <table class="dt">
+                  <colgroup><col style="width:46px"><col style="width:200px"><col></colgroup>
+                  <tbody>
+                    <tr><td class="idx">1</td><td class="k">actor</td><td class="v">svc-billing</td></tr>
+                    <tr><td class="idx">2</td><td class="k">action</td><td class="v">refund.create</td></tr>
+                    <tr><td class="idx">3</td><td class="k">target</td><td class="v">order:88213</td></tr>
+                    <tr><td class="idx">4</td><td class="k">amount</td><td class="v">248.00</td></tr>
+                    <tr><td class="idx">5</td><td class="k">currency</td><td class="v">CNY</td></tr>
+                    <tr><td class="idx">6</td><td class="k">meta</td><td><span class="vprev"><span class="vtag">JSON</span><span class="v clip">{"reason":"customer_request","approvedBy":"admin:7"}</span></span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- 消费者组 -->
+          <div class="is-hidden" data-panel-group="stream" data-panel="groups" style="flex:1;display:flex;flex-direction:column;min-height:0">
+            <div class="toolbar">
+              <button class="btn btn-sm"><svg class="i i-12"><use href="#i-plus"/></svg>创建消费者组</button>
+              <div class="spacer"></div>
+              <span style="font-size:var(--fs-11);color:var(--fg-4)">XINFO GROUPS</span>
+            </div>
+            <div class="tablewrap">
+              <table class="dt">
+                <colgroup><col style="width:170px"><col style="width:170px"><col style="width:96px"><col style="width:96px"><col><col style="width:120px"></colgroup>
+                <thead><tr><th>组名</th><th>最后投递 ID</th><th class="r">待确认</th><th class="r">消费者</th><th class="r">滞后</th><th class="r">操作</th></tr></thead>
+                <tbody>
+                  <tr><td class="k">audit-archiver</td><td class="k">1753412498-3</td><td class="r num">0</td><td class="r num">2</td><td class="r num">0</td>
+                    <td><div class="rowact" style="visibility:visible"><button class="btn btn-ghost btn-icon btn-sm" title="查看待确认"><svg class="i i-12"><use href="#i-list"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" title="重置游标"><svg class="i i-12"><use href="#i-history"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                  <tr class="is-sel"><td class="k">fraud-detect</td><td class="k">1753412402-0</td><td class="r num" style="color:var(--warn);font-weight:600">184</td><td class="r num">3</td><td class="r num">96</td>
+                    <td><div class="rowact" style="visibility:visible"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-list"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-history"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                  <tr><td class="k">metrics-sink</td><td class="k">1753412498-3</td><td class="r num">2</td><td class="r num">2</td><td class="r num">0</td>
+                    <td><div class="rowact" style="visibility:visible"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-list"/></svg></button><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-history"/></svg></button><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--brand)"><svg class="i i-12"><use href="#i-trash"/></svg></button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="drawer" style="height:190px">
+              <div class="drawer-hd">
+                <svg class="i i-12" style="color:var(--fg-3)"><use href="#i-chevron-down"/></svg>
+                <span class="t">待确认消息</span><span class="mono" style="color:var(--fg-3)">fraud-detect</span>
+                <span class="tag tag-warn">184 条</span>
+                <div class="spacer"></div>
+                <button class="btn btn-sm">XCLAIM 转移…</button>
+                <button class="btn btn-sm btn-danger">XACK 全部确认</button>
+              </div>
+              <div class="drawer-body">
+                <table class="dt">
+                  <colgroup><col style="width:170px"><col style="width:170px"><col style="width:130px"><col></colgroup>
+                  <thead><tr><th>ID</th><th>消费者</th><th class="r">空闲时长</th><th class="r">投递次数</th></tr></thead>
+                  <tbody>
+                    <tr><td class="k">1753412403-0</td><td class="v">worker-2</td><td class="r num">18 分 12 秒</td><td class="r num">4</td></tr>
+                    <tr><td class="k">1753412404-1</td><td class="v">worker-2</td><td class="r num">18 分 11 秒</td><td class="r num">4</td></tr>
+                    <tr><td class="k">1753412406-0</td><td class="v">worker-5</td><td class="r num">18 分 09 秒</td><td class="r num">3</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- 消费者 -->
+          <div class="is-hidden" data-panel-group="stream" data-panel="consumers" style="flex:1;display:flex;flex-direction:column;min-height:0">
+            <div class="toolbar">
+              <div class="select"><input class="input w-160" value="全部消费者组"><svg class="i i-12 caret"><use href="#i-chevron-down"/></svg></div>
+              <div class="spacer"></div>
+              <span style="font-size:var(--fs-11);color:var(--fg-4)">XINFO CONSUMERS</span>
+            </div>
+            <div class="tablewrap">
+              <table class="dt">
+                <colgroup><col style="width:170px"><col style="width:180px"><col style="width:110px"><col style="width:130px"><col></colgroup>
+                <thead><tr><th>消费者</th><th>所属组</th><th class="r">待确认</th><th class="r">空闲时长</th><th class="r">状态</th></tr></thead>
+                <tbody>
+                  <tr><td class="k">worker-1</td><td class="v">audit-archiver</td><td class="r num">0</td><td class="r num">2 秒</td><td class="r"><span class="tag tag-ok">活跃</span></td></tr>
+                  <tr><td class="k">worker-2</td><td class="v">fraud-detect</td><td class="r num">92</td><td class="r num">18 分 12 秒</td><td class="r"><span class="tag tag-warn">卡住</span></td></tr>
+                  <tr><td class="k">worker-5</td><td class="v">fraud-detect</td><td class="r num">61</td><td class="r num">18 分 09 秒</td><td class="r"><span class="tag tag-warn">卡住</span></td></tr>
+                  <tr><td class="k">worker-6</td><td class="v">fraud-detect</td><td class="r num">31</td><td class="r num">4 秒</td><td class="r"><span class="tag tag-ok">活跃</span></td></tr>
+                  <tr><td class="k">sink-a</td><td class="v">metrics-sink</td><td class="r num">1</td><td class="r num">1 秒</td><td class="r"><span class="tag tag-ok">活跃</span></td></tr>
+                  <tr><td class="k">sink-b</td><td class="v">metrics-sink</td><td class="r num">1</td><td class="r num">1 秒</td><td class="r"><span class="tag tag-ok">活跃</span></td></tr>
+                  <tr><td class="k">archiver-2</td><td class="v">audit-archiver</td><td class="r num">0</td><td class="r num">3 秒</td><td class="r"><span class="tag tag-ok">活跃</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ CLI ═════════════════════════════════════ -->
+        <div class="is-hidden" data-panel-group="kv" data-panel="cli" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="keyhdr">
+            <div class="kh-main">
+              <h2 style="font-family:var(--ff-ui);font-size:14px">
+                <svg class="i i-16" style="color:var(--fg-3)"><use href="#i-terminal"/></svg>
+                命令行 <span class="tag">prod-east / db0</span>
+              </h2>
+              <div class="keymeta"><span>已执行 <b>18</b> 条</span><span>平均 <b>1.4 ms</b></span><span class="tag tag-danger" style="border:0;background:transparent;padding:0"><svg class="i i-12"><use href="#i-lock"/></svg> 只读连接，写入命令会被拦截</span></div>
+            </div>
+            <div class="kh-act">
+              <button class="btn btn-sm"><svg class="i i-12"><use href="#i-history"/></svg>历史</button>
+              <button class="btn btn-sm"><svg class="i i-12"><use href="#i-download"/></svg>导出</button>
+              <button class="btn btn-ghost btn-icon btn-sm" title="清屏"><svg class="i"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+          <div class="term"><span class="cmd">INFO server</span>
+<span class="ret"># Server
+redis_version:7.2.4
+redis_mode:cluster
+os:Linux 6.1.0-18-amd64 x86_64
+uptime_in_days:41</span> <span class="ms">· 1.1 ms</span>
+
+<span class="cmd">TYPE user:profile:1002</span>
+<span class="ret-s">"hash"</span> <span class="ms">· 0.4 ms</span>
+
+<span class="cmd">OBJECT ENCODING user:profile:1002</span>
+<span class="ret-s">"listpack"</span> <span class="ms">· 0.3 ms</span>
+
+<span class="cmd">HLEN user:profile:1002</span>
+<span class="ret-i">(integer) 9</span> <span class="ms">· 0.3 ms</span>
+
+<span class="cmd">TTL user:profile:1002</span>
+<span class="ret-i">(integer) 85267</span> <span class="ms">· 0.3 ms</span>
+
+<span class="cmd">HRANDFIELD user:profile:1002 3</span>
+<span class="idx">1)</span> <span class="ret-s">"tier"</span>
+<span class="idx">2)</span> <span class="ret-s">"avatar"</span>
+<span class="idx">3)</span> <span class="ret-s">"lastLoginAt"</span> <span class="ms">· 0.5 ms</span>
+
+<span class="cmd">GET missing:key</span>
+<span class="ret-n">(nil)</span> <span class="ms">· 0.3 ms</span>
+
+<span class="cmd">DEL user:profile:1002</span>
+<span class="ret-e">(error) 该连接为只读模式，已拦截写入命令 DEL</span>
+</div>
+          <div class="term-input">
+            <span style="color:var(--accent)">&gt;</span>
+            <span style="color:var(--fg)">HGETALL user:profile:</span><span class="caret"></span>
+            <span class="spacer"></span>
+            <span class="kbd">↑↓</span><span style="font-size:var(--fs-11)">历史</span>
+            <span class="kbd">Tab</span><span style="font-size:var(--fs-11)">补全</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 状态栏 ─────────────────────────────────────── -->
+    <div class="statusbar">
+      <div class="sb"><span class="dot dot-ok"></span>prod-east 已连接</div>
+      <div class="sb-sep"></div>
+      <div class="sb">Redis 7.2.4 · 集群 6 节点</div>
+      <div class="sb-sep"></div>
+      <div class="sb"><svg class="i i-12"><use href="#i-database"/></svg>db0 · 1,284 keys</div>
+      <div class="sb-sep"></div>
+      <div class="sb"><svg class="i i-12"><use href="#i-hdd"/></svg>1.24 GB / 4 GB</div>
+      <div class="spacer"></div>
+      <div class="sb"><svg class="i i-12" style="color:var(--accent)"><use href="#i-zap"/></svg>2 个任务运行中</div>
+      <div class="sb-sep"></div>
+      <div class="sb" style="color:var(--brand)"><svg class="i i-12"><use href="#i-lock"/></svg>只读</div>
+      <div class="sb-sep"></div>
+      <div class="sb"><svg class="i i-12"><use href="#i-terminal"/></svg>控制台</div>
+    </div>
+
+  </div>
+  </div></div>
+
+  <div class="note">
+    <b>六种类型的共同骨架</b>
+    <ul>
+      <li><b>元信息头</b>永远在最上面，永远是同一套排布：key 名 + 类型徽标，下面一行是「规模 / 字节数 / 编码 / 位置」。规模的单位随类型变（字段、元素、成员、条），但位置固定，扫视成本最低。</li>
+      <li><b>TTL 是控件不是元数据</b>，所以它在右侧操作组的最前面，而不是混在灰色元信息里。理由：它是唯一会自己变化、自带破坏性、且高频被修改的属性。四种状态见首页组件预览——不过期（中性灰）、倒计时（等宽 + tabular-nums，否则每秒重绘会抖）、即将过期（&lt; 60 秒转琥珀色）、已过期（转 Redis 红，整个标签页切成"该 Key 已过期"）。切到 <b>ZSET</b> 标签可以看到点开后的编辑浮层。</li>
+      <li><b>改 TTL 用浮层不用模态</b>：高频低风险操作。三个选项直接对应 <code>PERSIST</code> / <code>EXPIRE</code> / <code>EXPIREAT</code>，底部永远显示换算出的绝对时刻和即将执行的命令——TTL 最常见的翻车就是单位和基准搞混。</li>
+      <li><b>右上角操作组</b>顺序固定：TTL · 分隔线 · 刷新 · 重命名 · 复制 · 分隔线 · 删除。删除永远在最后且是唯一的红色。</li>
+      <li><b>工具条只放该类型特有的东西</b>：List 是索引跳转与头尾插入，ZSet 是分数区间与排序，Set 是 SSCAN 模式，Stream 是 ID 区间与实时跟随。通用的视图切换一律靠右。</li>
+      <li><b>值详情抽屉</b>只在「单元格里塞不下」的类型上出现（Hash / List / Stream）。Set 和 ZSet 的成员本身就是短字符串，给它们加抽屉只会浪费高度。</li>
+      <li><b>大 key 的处理是显式的</b>：底部条永远写明「已加载 N / 总数」，配进度条和「再加载」按钮，而不是假装数据已经全在本地。</li>
+      <li><b>类型色</b>只用在三处：树/列表的圆点、标签页的圆点、元信息头的徽标。表格内部不再上色，避免密集数据变成色块墙。</li>
+      <li><b>CLI</b> 复用同一套等宽字体与配色：整数绿、字符串红、nil 灰、错误用 Redis 红；每条回包右侧标注耗时。只读连接下写入命令在客户端直接拦截并给出中文错误。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

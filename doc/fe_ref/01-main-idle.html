@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>01 主窗口 · 未选中实例 — Tsubasa Redis Manager</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/ui.css">
+<script src="assets/proto.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <div class="pagehd">
+    <a href="index.html">← 原型索引</a>
+    <div>
+      <h1>01 · 主窗口（未选中任何实例）</h1>
+      <div class="sub">1280 × 800 · 浅色 · 冷启动首屏</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="zoomctl" data-zoom-ctl>
+      <button data-zoom="1">100%</button><button data-zoom="0.8">80%</button><button data-zoom="0.65">65%</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap"><div class="stage">
+  <div class="win">
+
+    <!-- ── 标题栏 ─────────────────────────────────────── -->
+    <div class="titlebar">
+      <div class="brand"><span class="brand-mark"></span>Tsubasa Redis Manager</div>
+      <div class="omnibar">
+        <svg class="i i-12"><use href="#i-search"/></svg>
+        搜索 Key、连接或命令
+        <span class="kbd">Ctrl</span><span class="kbd">K</span>
+      </div>
+      <div class="wctl">
+        <button><svg class="i i-12"><use href="#i-minus"/></svg></button>
+        <button><svg class="i i-12"><use href="#i-maximize"/></svg></button>
+        <button class="close"><svg class="i i-12"><use href="#i-x"/></svg></button>
+      </div>
+    </div>
+
+    <div class="win-body">
+
+      <!-- ── 侧栏：连接列表（全部折叠）──────────────────── -->
+      <div class="side">
+        <div class="side-hd">
+          <span class="t">连接</span>
+          <span class="count-pill" style="margin-left:6px">5</span>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost btn-icon btn-sm" title="刷新"><svg class="i i-12"><use href="#i-refresh"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" title="新建连接 Ctrl+N"><svg class="i"><use href="#i-plus"/></svg></button>
+        </div>
+
+        <div class="side-search">
+          <div class="input-wrap">
+            <svg class="i i-12 lead"><use href="#i-search"/></svg>
+            <input class="input" placeholder="筛选连接…">
+          </div>
+        </div>
+
+        <div class="tree">
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <span class="cdot" style="background:#d6372b"></span>
+            <span class="tname">prod-east</span>
+            <span class="tbadges">
+              <span class="tag" style="padding:0 4px" title="集群"><svg class="i i-12"><use href="#i-branch"/></svg></span>
+              <span class="tag tag-danger" style="padding:0 4px" title="只读"><svg class="i i-12"><use href="#i-lock"/></svg></span>
+            </span>
+          </div>
+
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <span class="cdot" style="background:#b45309"></span>
+            <span class="tname">staging-eu</span>
+            <span class="tbadges">
+              <span class="tag" style="padding:0 4px" title="SSH 隧道"><svg class="i i-12"><use href="#i-link"/></svg></span>
+              <span class="tag" style="padding:0 4px" title="TLS"><svg class="i i-12"><use href="#i-shield"/></svg></span>
+            </span>
+          </div>
+
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <span class="cdot" style="background:#0e7490"></span>
+            <span class="tname">analytics-sentinel</span>
+            <span class="tbadges">
+              <span class="tag" style="padding:0 4px" title="哨兵 mymaster"><svg class="i i-12"><use href="#i-shield"/></svg></span>
+            </span>
+          </div>
+
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <span class="cdot" style="background:#15803d"></span>
+            <span class="tname">local-dev</span>
+          </div>
+
+          <div class="trow lv-conn" style="--ind:0">
+            <span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span>
+            <span class="cdot" style="background:#8a8a95"></span>
+            <span class="tname" style="color:var(--fg-3)">cache-cn</span>
+            <span class="tbadges"><span class="tag" style="padding:0 5px;color:var(--fg-4)">离线</span></span>
+          </div>
+        </div>
+
+        <div class="side-ft">
+          <button class="btn btn-ghost btn-icon btn-sm" title="设置 Ctrl+,"><svg class="i"><use href="#i-settings"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" title="导入 / 导出"><svg class="i"><use href="#i-upload"/></svg></button>
+          <div class="spacer"></div>
+          <span style="font-size:var(--fs-10);color:var(--fg-4);padding-right:4px">v0.1.0</span>
+        </div>
+      </div>
+
+      <!-- ── 主区：空状态 ──────────────────────────────── -->
+      <div class="main">
+        <div class="emptystate">
+          <div class="emptystate-mark"></div>
+          <h3>Tsubasa Redis Manager</h3>
+          <p>从左侧选择一个连接，或者新建一个。</p>
+
+          <div style="display:flex;gap:8px;margin-top:18px">
+            <button class="btn btn-primary">
+              <svg class="i"><use href="#i-plus"/></svg>新建连接
+              <span class="kbd" style="background:rgba(255,255,255,.18);border-color:transparent;color:#fff">Ctrl N</span>
+            </button>
+            <button class="btn">
+              <svg class="i"><use href="#i-upload"/></svg>从 Another Redis Desktop Manager 导入
+            </button>
+          </div>
+
+          <div class="recent">
+            <div class="cap">最近打开</div>
+            <ul>
+              <li>
+                <span class="cdot" style="background:#d6372b"></span>
+                <span style="color:var(--fg-2)">prod-east / db0</span>
+                <span class="mono">user:profile:1001</span>
+                <span class="chip hash">HASH</span>
+                <span class="when">2 分钟前</span>
+              </li>
+              <li>
+                <span class="cdot" style="background:#15803d"></span>
+                <span style="color:var(--fg-2)">local-dev / db0</span>
+                <span class="mono">session:9f2c41ab</span>
+                <span class="chip string">STRING</span>
+                <span class="when">昨天</span>
+              </li>
+              <li>
+                <span class="cdot" style="background:#b45309"></span>
+                <span style="color:var(--fg-2)">staging-eu / db3</span>
+                <span class="mono">order:2026:0715</span>
+                <span class="chip zset">ZSET</span>
+                <span class="when">3 天前</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="hintbar">
+            <span><span class="kbd">Ctrl</span><span class="kbd">K</span> 搜索 Key</span>
+            <span><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">P</span> 命令面板</span>
+            <span><span class="kbd">Ctrl</span><span class="kbd">`</span> 控制台</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 状态栏 ─────────────────────────────────────── -->
+    <div class="statusbar">
+      <div class="sb"><span class="dot dot-off"></span>未连接</div>
+      <div class="sb-sep"></div>
+      <div class="sb">5 个已保存连接</div>
+      <div class="spacer"></div>
+      <div class="sb">无运行中的任务</div>
+      <div class="sb-sep"></div>
+      <div class="sb"><svg class="i i-12"><use href="#i-terminal"/></svg>控制台</div>
+    </div>
+
+  </div>
+  </div></div>
+
+  <div class="note">
+    <b>设计要点</b>
+    <ul>
+      <li>侧栏是<b>唯一</b>的导航区：连接 → DB → namespace → key 全部在同一棵树里，不做二级抽屉。折叠状态下只显示连接，避免冷启动时的信息噪声。</li>
+      <li>连接右侧的图标徽标对应后端 <code>ConnectionSummary</code> 的 <code>cluster</code> / <code>readonly</code> / <code>sshEnabled</code> / <code>tlsEnabled</code> / <code>sentinelEnabled</code>，颜色圆点对应 <code>color</code> 字段。</li>
+      <li>标题栏中央的 omnibar 是全局入口（Key 搜索 + 命令面板），和 Key 内容搜索严格分开，后者在编辑器工具条上。</li>
+      <li>空态不用卡片：一个品牌标记、两个动作、一段最近记录、一行快捷键提示。Redis 红只出现在品牌标记和 <code>只读</code> 徽标上。</li>
+      <li>底部状态栏在未连接时也保留，位置固定，避免连接后布局跳动。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

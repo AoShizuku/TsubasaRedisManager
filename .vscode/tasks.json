@@ -1,0 +1,176 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: dev",
+      "type": "npm",
+      "script": "dev",
+      "detail": "启动 Vite 开发服务器（npm run dev）",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "VITE v",
+          "endsPattern": "Local:.*http://127\\.0\\.0\\.1:1420"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "close": true
+      }
+    },
+    {
+      "label": "npm: dev:stop",
+      "type": "shell",
+      "command": "echo ${input:terminateVite}",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "close": true
+      }
+    },
+    {
+      "label": "cargo: build (debug)",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "build",
+        "--manifest-path=./src-tauri/Cargo.toml",
+        "--no-default-features"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated",
+        "clear": true,
+        "close": true
+      }
+    },
+    {
+      "label": "tauri: dev:prepare",
+      "dependsOn": ["npm: dev", "cargo: build (debug)"],
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: build",
+      "type": "npm",
+      "script": "build",
+      "detail": "类型检查并构建前端（npm run build）",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "npm: preview",
+      "type": "npm",
+      "script": "preview",
+      "detail": "预览前端构建结果（npm run preview）",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "npm: tauri",
+      "type": "npm",
+      "script": "tauri",
+      "detail": "运行 Tauri CLI（npm run tauri）",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "npm: tauri:dev",
+      "type": "npm",
+      "script": "tauri:dev",
+      "detail": "启动完整 Tauri 桌面应用（npm run tauri:dev）",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "npm: tauri:build",
+      "type": "npm",
+      "script": "tauri:build",
+      "detail": "构建 Tauri 桌面应用安装包（npm run tauri:build）",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "npm: test:rust",
+      "type": "npm",
+      "script": "test:rust",
+      "detail": "运行 Rust 测试（npm run test:rust）",
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "npm: lint:rust",
+      "type": "npm",
+      "script": "lint:rust",
+      "detail": "检查 Rust 格式与 Clippy 警告（npm run lint:rust）",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "npm: check",
+      "type": "npm",
+      "script": "check",
+      "detail": "运行完整项目检查（npm run check）",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "terminateVite",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "npm: dev"
+    }
+  ]
+}

@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>03 新建连接 — Tsubasa Redis Manager</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/ui.css">
+<script src="assets/proto.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <div class="pagehd">
+    <a href="index.html">← 原型索引</a>
+    <div>
+      <h1>03 · 新建连接</h1>
+      <div class="sub">720 × 620 对话框 · 顶部 5 个分页可点击切换</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="zoomctl" data-zoom-ctl>
+      <button data-zoom="1">100%</button><button data-zoom="0.8">80%</button><button data-zoom="0.65">65%</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap"><div class="stage">
+  <div class="win">
+
+    <!-- ── 背景主窗口（置灰）───────────────────────────── -->
+    <div class="titlebar">
+      <div class="brand"><span class="brand-mark"></span>Tsubasa Redis Manager</div>
+      <div class="omnibar"><svg class="i i-12"><use href="#i-search"/></svg>搜索 Key、连接或命令<span class="kbd">Ctrl</span><span class="kbd">K</span></div>
+      <div class="wctl">
+        <button><svg class="i i-12"><use href="#i-minus"/></svg></button>
+        <button><svg class="i i-12"><use href="#i-maximize"/></svg></button>
+        <button class="close"><svg class="i i-12"><use href="#i-x"/></svg></button>
+      </div>
+    </div>
+    <div class="win-body">
+      <div class="side">
+        <div class="side-hd"><span class="t">连接</span><div class="spacer"></div>
+          <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-plus"/></svg></button></div>
+        <div class="side-search"><div class="input-wrap"><svg class="i i-12 lead"><use href="#i-search"/></svg><input class="input" placeholder="筛选连接…"></div></div>
+        <div class="tree">
+          <div class="trow lv-conn" style="--ind:0"><span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span><span class="cdot" style="background:#d6372b"></span><span class="tname">prod-east</span></div>
+          <div class="trow lv-conn" style="--ind:0"><span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span><span class="cdot" style="background:#b45309"></span><span class="tname">staging-eu</span></div>
+          <div class="trow lv-conn" style="--ind:0"><span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span><span class="cdot" style="background:#0e7490"></span><span class="tname">analytics-sentinel</span></div>
+          <div class="trow lv-conn" style="--ind:0"><span class="tw"><svg class="i i-12"><use href="#i-chevron-right"/></svg></span><span class="cdot" style="background:#15803d"></span><span class="tname">local-dev</span></div>
+        </div>
+        <div class="side-ft"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-settings"/></svg></button></div>
+      </div>
+      <div class="main"><div class="emptystate"><div class="emptystate-mark"></div><h3>Tsubasa Redis Manager</h3><p>从左侧选择一个连接，或者新建一个。</p></div></div>
+    </div>
+    <div class="statusbar">
+      <div class="sb"><span class="dot dot-off"></span>未连接</div><div class="sb-sep"></div><div class="sb">4 个已保存连接</div>
+      <div class="spacer"></div><div class="sb"><svg class="i i-12"><use href="#i-terminal"/></svg>控制台</div>
+    </div>
+
+    <!-- ── 对话框 ─────────────────────────────────────── -->
+    <div class="scrim">
+      <div class="dlg" style="width:720px">
+
+        <div class="dlg-hd">
+          <svg class="i i-16" style="color:var(--accent)"><use href="#i-server"/></svg>
+          <div>
+            <h3>新建连接</h3>
+            <p>凭据保存在系统密钥链，不会写入配置文件。</p>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost btn-icon btn-sm"><svg class="i"><use href="#i-x"/></svg></button>
+        </div>
+
+        <div class="dlg-tabs" data-tab-group="conn">
+          <div class="dlg-tab is-active" data-tab="basic"><svg class="i i-12"><use href="#i-sliders"/></svg>常规</div>
+          <div class="dlg-tab" data-tab="tls"><svg class="i i-12"><use href="#i-shield"/></svg>TLS</div>
+          <div class="dlg-tab" data-tab="ssh"><svg class="i i-12"><use href="#i-link"/></svg>SSH 隧道</div>
+          <div class="dlg-tab" data-tab="sentinel"><svg class="i i-12"><use href="#i-branch"/></svg>哨兵</div>
+          <div class="dlg-tab" data-tab="adv"><svg class="i i-12"><use href="#i-settings"/></svg>高级</div>
+        </div>
+
+        <div class="dlg-body" style="height:404px">
+
+          <!-- ─ 常规 ─ -->
+          <div class="form" data-panel-group="conn" data-panel="basic">
+            <div class="form-sec">
+              <div class="field">
+                <label>连接名称</label>
+                <div class="field-ctl">
+                  <input class="input grow" value="prod-east" placeholder="留空则使用 host:port/db">
+                  <div class="swatches">
+                    <span class="swatch is-on" style="background:#d6372b"></span>
+                    <span class="swatch" style="background:#b45309"></span>
+                    <span class="swatch" style="background:#15803d"></span>
+                    <span class="swatch" style="background:#0e7490"></span>
+                    <span class="swatch" style="background:#6d28d9"></span>
+                    <span class="swatch" style="background:#8a8a95"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="field">
+                <label>地址</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" value="redis-prod-east.internal">
+                  <span style="color:var(--fg-4)">:</span>
+                  <input class="input w-88 mono" value="6379">
+                </div>
+              </div>
+              <div class="field">
+                <label>用户名</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" value="default" placeholder="Redis 6 ACL 用户，留空则不发送">
+                </div>
+              </div>
+              <div class="field">
+                <label>密码</label>
+                <div class="field-ctl">
+                  <div class="input-wrap">
+                    <input class="input mono" type="password" value="••••••••••••">
+                    <span class="trail"><button class="btn btn-ghost btn-icon btn-sm"><svg class="i i-12"><use href="#i-eye"/></svg></button></span>
+                  </div>
+                  <span class="tag tag-ok"><svg class="i i-12"><use href="#i-lock"/></svg>系统密钥链</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-sec">
+              <div class="cap">拓扑</div>
+              <div class="field">
+                <label>部署模式</label>
+                <div class="field-ctl">
+                  <div class="seg">
+                    <button>单机</button><button class="is-active">集群</button><button>哨兵</button>
+                  </div>
+                  <span style="font-size:var(--fs-11);color:var(--fg-4)">集群与哨兵互斥</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>默认 DB</label>
+                <div class="field-ctl">
+                  <input class="input w-88 mono" value="0" disabled>
+                  <span style="font-size:var(--fs-11);color:var(--fg-4)">集群模式下固定为 db0</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Key 分隔符</label>
+                <div class="field-ctl">
+                  <input class="input w-64 mono" value=":">
+                  <span style="font-size:var(--fs-11);color:var(--fg-4)">树按此字符折叠 namespace，留空则不折叠</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-sec">
+              <div class="cap">安全</div>
+              <div class="srow" style="border-bottom:0;padding:8px 0">
+                <div class="srow-txt">
+                  <b>只读模式</b>
+                  <p>禁用所有写入命令与删除操作，界面上的写入按钮会置灰。</p>
+                </div>
+                <div class="srow-ctl"><span class="sw on"></span></div>
+              </div>
+              <div class="srow" style="border-bottom:0;padding:8px 0">
+                <div class="srow-txt">
+                  <b>标记为生产环境</b>
+                  <p>执行 <code>FLUSHDB</code> / <code>FLUSHALL</code> / <code>KEYS</code> / 批量删除前要求输入连接名确认。</p>
+                </div>
+                <div class="srow-ctl"><span class="sw on"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ TLS ─ -->
+          <div class="form is-hidden" data-panel-group="conn" data-panel="tls">
+            <div class="srow" style="padding-top:0">
+              <div class="srow-txt"><b>启用 TLS</b><p>使用 rustls 建立加密连接，可与 SSH 隧道叠加。</p></div>
+              <div class="srow-ctl"><span class="sw on"></span></div>
+            </div>
+            <div class="form-sec" style="margin-top:14px;padding-top:0;border-top:0">
+              <div class="field">
+                <label>CA 证书</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" value="C:\certs\redis-prod\ca.crt">
+                  <button class="btn"><svg class="i i-12"><use href="#i-folder"/></svg>选择…</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>客户端证书</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" value="C:\certs\redis-prod\client.crt">
+                  <button class="btn"><svg class="i i-12"><use href="#i-folder"/></svg>选择…</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>客户端私钥</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" value="C:\certs\redis-prod\client.key">
+                  <button class="btn"><svg class="i i-12"><use href="#i-folder"/></svg>选择…</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>SNI 名称</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" value="redis-prod-east.internal" placeholder="留空则使用连接地址">
+                </div>
+              </div>
+            </div>
+            <div class="form-sec">
+              <div class="srow" style="border-bottom:0;padding:8px 0">
+                <div class="srow-txt"><b>跳过证书校验</b><p>仅用于自签名证书的临时排查，会失去中间人防护。</p></div>
+                <div class="srow-ctl"><span class="sw"></span></div>
+              </div>
+              <div class="banner banner-warn" style="margin-top:8px">
+                <svg class="i i-12" style="margin-top:2px"><use href="#i-alert"/></svg>
+                <div>关闭证书校验后，连接名旁会长期显示 <b>不安全</b> 标记，且该连接无法被标记为生产环境。</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ SSH ─ -->
+          <div class="form is-hidden" data-panel-group="conn" data-panel="ssh">
+            <div class="srow" style="padding-top:0">
+              <div class="srow-txt"><b>启用 SSH 隧道</b><p>先建立 SSH 连接，再在隧道内连接 Redis。</p></div>
+              <div class="srow-ctl"><span class="sw on"></span></div>
+            </div>
+            <div class="form-sec" style="margin-top:14px;padding-top:0;border-top:0">
+              <div class="field">
+                <label>跳板机地址</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" value="bastion.east.example.com">
+                  <span style="color:var(--fg-4)">:</span>
+                  <input class="input w-88 mono" value="22">
+                </div>
+              </div>
+              <div class="field">
+                <label>用户名</label>
+                <div class="field-ctl"><input class="input grow mono" value="ops-deploy"></div>
+              </div>
+              <div class="field">
+                <label>认证方式</label>
+                <div class="field-ctl">
+                  <div class="seg"><button>密码</button><button class="is-active">私钥</button></div>
+                </div>
+              </div>
+              <div class="field">
+                <label>私钥文件</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" value="C:\Users\you\.ssh\id_ed25519">
+                  <button class="btn"><svg class="i i-12"><use href="#i-folder"/></svg>选择…</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>私钥口令</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" type="password" value="••••••••">
+                  <span class="tag tag-ok"><svg class="i i-12"><use href="#i-lock"/></svg>系统密钥链</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>超时</label>
+                <div class="field-ctl"><input class="input w-88 mono" value="30"><span style="font-size:var(--fs-11);color:var(--fg-4)">秒</span></div>
+              </div>
+            </div>
+            <div class="banner banner-info" style="margin-top:14px">
+              <svg class="i i-12" style="margin-top:2px"><use href="#i-info"/></svg>
+              <div>当前版本支持 <b>ed25519</b> 与 <b>ECDSA</b> 私钥。RSA 私钥暂不可用：其依赖库尚无修复 RUSTSEC-2023-0071 的发布版本。</div>
+            </div>
+          </div>
+
+          <!-- ─ 哨兵 ─ -->
+          <div class="form is-hidden" data-panel-group="conn" data-panel="sentinel">
+            <div class="srow" style="padding-top:0">
+              <div class="srow-txt"><b>通过哨兵连接</b><p>由哨兵解析当前主节点地址，主从切换后自动重连。</p></div>
+              <div class="srow-ctl"><span class="sw"></span></div>
+            </div>
+            <div class="form-sec" style="margin-top:14px;padding-top:0;border-top:0;opacity:.5">
+              <div class="field">
+                <label>Master 名称</label>
+                <div class="field-ctl"><input class="input grow mono" value="mymaster"></div>
+              </div>
+              <div class="field">
+                <label>节点密码</label>
+                <div class="field-ctl">
+                  <input class="input grow mono" type="password" placeholder="哨兵节点自身的密码，与 Redis 密码不同">
+                </div>
+              </div>
+              <div class="field-hint">上方「常规 → 地址」填写任意一个哨兵节点的地址与端口。</div>
+            </div>
+            <div class="banner banner-warn" style="margin-top:14px">
+              <svg class="i i-12" style="margin-top:2px"><use href="#i-alert"/></svg>
+              <div>当前连接的部署模式为 <b>集群</b>，哨兵配置不可用。后端会直接拒绝同时启用两者的配置。</div>
+            </div>
+          </div>
+
+          <!-- ─ 高级 ─ -->
+          <div class="form is-hidden" data-panel-group="conn" data-panel="adv">
+            <div class="form-sec" style="padding-top:0;border-top:0">
+              <div class="cap">超时</div>
+              <div class="field"><label>连接超时</label><div class="field-ctl"><input class="input w-88 mono" value="10"><span style="font-size:var(--fs-11);color:var(--fg-4)">秒</span></div></div>
+              <div class="field"><label>命令超时</label><div class="field-ctl"><input class="input w-88 mono" value="30"><span style="font-size:var(--fs-11);color:var(--fg-4)">秒，0 表示不限制</span></div></div>
+            </div>
+            <div class="form-sec">
+              <div class="cap">Key 扫描</div>
+              <div class="field"><label>SCAN COUNT</label><div class="field-ctl"><input class="input w-88 mono" value="500"><span style="font-size:var(--fs-11);color:var(--fg-4)">每批游标返回的 key 数量</span></div></div>
+              <div class="field"><label>树节点上限</label><div class="field-ctl"><input class="input w-120 mono" value="20000"><span style="font-size:var(--fs-11);color:var(--fg-4)">超出后只显示「加载更多」</span></div></div>
+              <div class="srow" style="border-bottom:0;padding:8px 0">
+                <div class="srow-txt"><b>展开时自动查询类型</b><p>对可见 key 批量执行 <code>TYPE</code>，以便在树上显示类型色点。大 keyspace 可关闭。</p></div>
+                <div class="srow-ctl"><span class="sw on"></span></div>
+              </div>
+            </div>
+            <div class="form-sec">
+              <div class="cap">连接后</div>
+              <div class="field" style="align-items:start">
+                <label style="padding-top:6px">初始化命令</label>
+                <div class="field-ctl"><textarea class="input mono grow" rows="2" placeholder="每行一条，连接建立后依次执行，例如 CLIENT SETNAME tsubasa"></textarea></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 测试结果条 -->
+        <div style="flex:none;padding:10px 16px;border-top:1px solid var(--bd)">
+          <div class="banner banner-ok">
+            <svg class="i i-12" style="margin-top:2px"><use href="#i-check"/></svg>
+            <div>连接成功 · Redis <b>7.2.4</b> · 握手 <b>18 ms</b> · 集群 <b>6</b> 节点（3 主 3 从）· 已通过 TLS 与 SSH 隧道</div>
+          </div>
+        </div>
+
+        <div class="dlg-ft">
+          <button class="btn"><svg class="i i-12"><use href="#i-power"/></svg>测试连接</button>
+          <div class="spacer"></div>
+          <button class="btn">取消</button>
+          <button class="btn">仅保存</button>
+          <button class="btn btn-primary">保存并连接<span class="kbd" style="background:rgba(255,255,255,.18);border-color:transparent;color:#fff">Enter</span></button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  </div></div>
+
+  <div class="note">
+    <b>设计要点</b>
+    <ul>
+      <li>字段与后端 <code>ConnectionEditDraft</code> / <code>ConnectionSaveDraft</code> 一一对应；TLS、SSH、哨兵各自是一个可选子对象，因此各占一个分页，而不是在一页里堆 30 个字段。</li>
+      <li>分页标题旁不放红点角标；相互冲突的配置（集群 vs 哨兵）用<b>页内 banner</b> 说明，因为后端 <code>build_connection_plan</code> 会直接拒绝这种组合，需要在提交前就讲清楚。</li>
+      <li>所有密码类字段旁标注「系统密钥链」，对应 <code>credential_store</code>；配置文件里只留 <code>hasAuth</code> 之类的布尔位。</li>
+      <li>「测试连接」的结果是一条常驻结果条而不是 toast——它包含版本、握手耗时、拓扑，用户需要反复对照。</li>
+      <li>底部三个动作：<b>取消 / 仅保存 / 保存并连接</b>。主按钮用强调蓝，不用 Redis 红；红色在这个窗口只出现在「跳过证书校验」引发的警告语境里。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

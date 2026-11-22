@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 256 256">
+  <!-- Tsubasa Redis Manager 应用图标源稿。本目录其余图标由它生成：先渲染 1024×1024 透明外缘 PNG，
+       再 `npx tauri icon <png>` 覆盖本目录。
+       Tsubasa 系列底版：圆角方 + 145° 品牌渐变 + 左上柔光 + 顶缘内高光 + 白色字形与同色系深投影，
+       各项目只换品牌色与字形；本项目品牌渐变 #e8574a → #c22a1e。标题栏（TitleBar.vue）直接引用本文件。
+       字形为三层数据库柱 + 右下 > 提示符与块光标（与 Tsubasa Terminal 同款），柱体沿提示符外扩 11 挖出光环。
+       三层等距：每层上缘是与上一层下缘平行的弧，层起点 = 上一层起点 + 层厚 + 缝（缝 16，层厚 20）。 -->
+  <defs>
+    <linearGradient id="bg" x1="0.21" y1="0.09" x2="0.79" y2="0.91">
+      <stop offset="0" stop-color="#e8574a"/>
+      <stop offset="1" stop-color="#c22a1e"/>
+    </linearGradient>
+    <radialGradient id="hl" cx="0.25" cy="0.12" r="0.75">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="0.12" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#6e130b" flood-opacity="0.45"/>
+    </filter>
+    <mask id="halo" maskUnits="userSpaceOnUse" x="0" y="0" width="256" height="256">
+      <rect width="256" height="256" fill="#ffffff"/>
+      <polyline points="128,126 161,156.4 128,186.7" fill="none" stroke="#000000" stroke-width="39" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="172.9" y="170.9" width="33" height="17.2" rx="5.3" fill="#000000" stroke="#000000" stroke-width="22" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+  <rect width="256" height="256" rx="56" fill="url(#hl)"/>
+  <rect x="1.5" y="1.5" width="253" height="253" rx="54.5" fill="none" stroke="url(#rim)" stroke-width="3"/>
+  <g filter="url(#sh)" fill="#ffffff">
+    <g mask="url(#halo)">
+      <ellipse cx="108" cy="84" rx="62" ry="22"/>
+      <path d="M46 100 v20 a62 22 0 0 0 124 0 v-20 a62 22 0 0 1 -124 0 z"/>
+      <path d="M46 136 v20 a62 22 0 0 0 124 0 v-20 a62 22 0 0 1 -124 0 z"/>
+    </g>
+    <polyline points="128,126 161,156.4 128,186.7" fill="none" stroke="#ffffff" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="172.9" y="170.9" width="33" height="17.2" rx="5.3"/>
+  </g>
+</svg>

@@ -1,0 +1,185 @@
+/* ============================================================
+   外壳：窗口、标题栏、标签栏、状态栏、侧栏、工具条、Key 头部
+   ============================================================ */
+
+/* ── 窗口外框 ───────────────────────────────────────────── */
+/* 原型里 .win 是 1280×800 的模拟窗口；产品里它就是整个视口。
+   decorations 关掉了，所以窗口拖动与缩放由 .titlebar 与 .rsz-* 承担。 */
+.win { position: fixed; inset: 0; display: flex; flex-direction: column;
+       background: var(--bg-app); overflow: hidden; }
+.win-body { flex: 1; display: flex; min-height: 0; }
+.side { width: var(--w-side); flex: none; display: flex; flex-direction: column;
+        background: var(--bg-sidebar); border-right: 1px solid var(--bd); min-height: 0; }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--bg-app); }
+
+/* 无边框窗口的缩放热区。宽度 4px：再窄命中率差，再宽会挡住滚动条。 */
+.rsz { position: fixed; z-index: 90; }
+.rsz-n { top: 0; left: 6px; right: 6px; height: 4px; cursor: ns-resize; }
+.rsz-s { bottom: 0; left: 6px; right: 6px; height: 4px; cursor: ns-resize; }
+.rsz-w { left: 0; top: 6px; bottom: 6px; width: 4px; cursor: ew-resize; }
+.rsz-e { right: 0; top: 6px; bottom: 6px; width: 4px; cursor: ew-resize; }
+.rsz-nw { top: 0; left: 0; width: 8px; height: 8px; cursor: nwse-resize; }
+.rsz-ne { top: 0; right: 0; width: 8px; height: 8px; cursor: nesw-resize; }
+.rsz-sw { bottom: 0; left: 0; width: 8px; height: 8px; cursor: nesw-resize; }
+.rsz-se { bottom: 0; right: 0; width: 8px; height: 8px; cursor: nwse-resize; }
+.win.is-maximized .rsz { display: none; }
+
+/* ── 标题栏 ─────────────────────────────────────────────── */
+.titlebar { height: var(--h-title); flex: none; display: flex; align-items: center; gap: 10px;
+            padding-left: 12px; background: var(--bg-chrome); border-bottom: 1px solid var(--bd); position: relative; }
+.brand { display: flex; align-items: center; gap: 7px; font-size: var(--fs-12); font-weight: 600; letter-spacing: -.1px; }
+/* 16px 与图标档一致；图标自带圆角与投影，不再叠 CSS 效果。pointer-events 关掉，拖动区照样生效 */
+.brand-icon { width: 16px; height: 16px; flex: none; pointer-events: none; }
+.omnibar { position: absolute; left: 50%; transform: translateX(-50%); width: 400px; height: 24px;
+           display: flex; align-items: center; gap: 7px; padding: 0 8px; font-size: var(--fs-11); color: var(--fg-3);
+           background: #fff; border: 1px solid var(--bd-strong); border-radius: var(--r-6); box-shadow: var(--sh-1); }
+.omnibar .kbd { margin-left: auto; }
+.wctl { margin-left: auto; display: flex; height: 100%; }
+.wctl button { width: 44px; height: 100%; border: 0; background: transparent; color: var(--fg-2); display: grid; place-items: center; }
+.wctl button:hover { background: var(--bg-active); }
+.wctl .close:hover { background: var(--brand); color: #fff; }
+
+/* ── 标签栏 ─────────────────────────────────────────────── */
+.tabbar { height: var(--h-tab); flex: none; display: flex; align-items: stretch; gap: 2px; padding: 0 6px;
+          background: var(--bg-chrome); border-bottom: 1px solid var(--bd); }
+.tabstrip { display: flex; align-items: stretch; gap: 2px; min-width: 0; overflow: hidden; }
+.tab { display: flex; align-items: center; gap: 7px; padding: 0 6px 0 10px; max-width: 208px; min-width: 0;
+       margin: 4px 0 -1px; border: 1px solid transparent; border-radius: var(--r-6) var(--r-6) 0 0;
+       font-size: var(--fs-12); color: var(--fg-2); flex: 0 1 auto; }
+.tab:hover { background: var(--bg-hover); }
+.tab.is-active { background: var(--bg-app); border-color: var(--bd); border-bottom-color: var(--bg-app); color: var(--fg); }
+/* 标题截断优先保住类型词：`CLI · analytics-se…` 可读，`Key 浏览…` 不可读。
+   所以类型词是 flex:none，只有作用域段会被压缩。 */
+.tab .tab-name { font-family: var(--ff-mono-user); font-size: 11.5px; letter-spacing: -.1px;
+                 overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tab .tab-kind { flex: none; white-space: nowrap; }
+.tab .tab-scope { font-family: var(--ff-mono-user); font-size: 11px; color: var(--fg-3);
+                  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.tab.is-active .tab-scope { color: var(--fg-2); }
+/* 预览页用斜体标题，与 VS Code 一致 —— 它表示"这个标签随时会被下一次单击顶掉"。
+   只斜体标题，不改图标和底色：预览页仍是一个完全正常的标签页。 */
+.tab.is-preview .tab-name,
+.tab.is-preview .tab-kind { font-style: italic; }
+.tab .tab-x { width: 16px; height: 16px; border-radius: 3px; display: grid; place-items: center; color: var(--fg-4); flex: none; }
+.tab:hover .tab-x, .tab.is-active .tab-x { color: var(--fg-3); }
+.tab .tab-x:hover { background: var(--bg-active); color: var(--fg); }
+.tab .tab-dirty { width: 7px; height: 7px; border-radius: 50%; background: var(--fg-3); flex: none; }
+.tabbar .tabadd { align-self: center; margin-left: 4px; flex: none; }
+.tabbar .tabtools { margin-left: auto; display: flex; align-items: center; gap: 2px; padding-right: 2px; flex: none; }
+
+/* 类型圆点 */
+.tdot { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.tdot.string { background: var(--t-string); }
+.tdot.hash   { background: var(--t-hash); }
+.tdot.list   { background: var(--t-list); }
+.tdot.set    { background: var(--t-set); }
+.tdot.zset   { background: var(--t-zset); }
+.tdot.stream { background: var(--t-stream); }
+.tdot.json   { background: var(--t-json); }
+.tdot.none   { background: var(--fg-4); }
+
+/* ── 状态栏 ─────────────────────────────────────────────── */
+.statusbar { height: var(--h-status); flex: none; display: flex; align-items: center; padding: 0 4px;
+             background: var(--bg-chrome); border-top: 1px solid var(--bd);
+             font-size: var(--fs-11); color: var(--fg-2); }
+.sb { display: flex; align-items: center; gap: 5px; height: 20px; padding: 0 8px; border-radius: var(--r-4); white-space: nowrap; }
+button.sb:hover { background: var(--bg-active); }
+.sb-sep { width: 1px; height: 12px; background: var(--bd-strong); margin: 0 3px; flex: none; }
+.dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.dot-ok { background: var(--ok); box-shadow: 0 0 0 2px var(--ok-weak); }
+.dot-off { background: var(--fg-4); }
+.dot-warn { background: var(--warn); box-shadow: 0 0 0 2px var(--warn-weak); }
+.dot-err { background: var(--brand); box-shadow: 0 0 0 2px var(--brand-weak); }
+
+/* ── 侧栏 ───────────────────────────────────────────────── */
+.side-hd { height: var(--h-title); flex: none; display: flex; align-items: center; gap: 6px;
+           padding: 0 6px 0 12px; border-bottom: 1px solid var(--bd); }
+.side-hd .t { font-size: var(--fs-12); font-weight: 600; color: var(--fg); }
+.side-search { padding: 8px; border-bottom: 1px solid var(--bd); display: flex; gap: 6px; }
+/* 前缀作用域 chip（doc/frontend/key-tree.md「文件夹内搜索与前缀权威」）。前缀是 key 路径的一部分 → 等宽；
+   作用域是强调不是危险 → accent 一族。放在放大镜与输入框之间，
+   读出来正好是「前缀 + 词」的语序。 */
+.side-scope { display: inline-flex; align-items: center; gap: 2px; flex: none; max-width: 45%;
+              margin-left: 25px; margin-right: 4px; height: 20px; padding: 0 2px 0 6px;
+              background: var(--accent-weak); border: 1px solid var(--accent-bd); border-radius: 4px; }
+.side-scope .t { font-family: var(--ff-mono-user); font-size: var(--fs-11); color: var(--accent);
+                 overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.side-scope .x { display: grid; place-items: center; width: 16px; height: 16px; border-radius: 3px;
+                 color: var(--accent); flex: none; }
+.side-scope .x:hover { background: var(--accent-bd); }
+/* chip 已经把放大镜的位置让出来了，输入框不再需要给图标留的内边距 */
+.side-search .side-scope ~ .input { padding-left: 6px; }
+.side-modes { height: 30px; flex: none; display: flex; align-items: center; gap: 6px; padding: 0 8px;
+              border-bottom: 1px solid var(--bd); }
+.side-ft { height: 30px; flex: none; display: flex; align-items: center; gap: 2px; padding: 0 6px;
+           border-top: 1px solid var(--bd); }
+/* 侧栏宽度可拖：208–420，见 tokens 的 --w-side */
+.side-split { width: 5px; margin: 0 -2px 0 -3px; flex: none; cursor: col-resize; position: relative; z-index: 5; }
+.side-split::after { content: ""; position: absolute; inset: 0 2px; }
+.side-split:hover::after, .side-split.is-dragging::after { background: var(--accent); }
+
+/* ── 工具条 / Key 头部 ──────────────────────────────────── */
+.toolbar { height: var(--h-bar); flex: none; display: flex; align-items: center; gap: 8px; padding: 0 10px;
+           background: var(--bg-subtle); border-bottom: 1px solid var(--bd); }
+.keyhdr { flex: none; display: flex; align-items: flex-start; gap: 14px; padding: 11px 14px 10px;
+          border-bottom: 1px solid var(--bd); background: var(--bg-app); }
+.keyhdr .kh-main { min-width: 0; }
+.keyhdr h2 { display: flex; align-items: center; gap: 9px; font-family: var(--ff-mono-user); font-size: 14.5px;
+             font-weight: 600; letter-spacing: -.25px; color: var(--fg); min-width: 0; }
+.keyhdr h2 .kname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+                    user-select: text; -webkit-user-select: text; }
+.keymeta { margin-top: 5px; display: flex; align-items: center; font-size: var(--fs-11); color: var(--fg-3); }
+.keymeta > span { padding-right: 9px; margin-right: 9px; border-right: 1px solid var(--bd); white-space: nowrap; }
+.keymeta > span:last-child { border-right: 0; padding-right: 0; margin-right: 0; }
+.keymeta b { color: var(--fg-2); font-weight: 500; }
+.kh-act { margin-left: auto; display: flex; align-items: center; gap: 4px; flex: none; }
+
+/* ── TTL：既是读数也是入口，所以是控件不是元数据 ─────────── */
+.ttl { height: var(--h-ctl-sm); display: inline-flex; align-items: center; gap: 6px; padding: 0 7px;
+       font-size: var(--fs-12); color: var(--fg); background: #fff; border: 1px solid var(--bd-input);
+       border-radius: var(--r-6); box-shadow: var(--sh-1); white-space: nowrap; }
+.ttl:hover:not(:disabled) { background: var(--bg-hover); }
+.ttl > svg { color: var(--fg-3); }
+.ttl .caret { color: var(--fg-4); }
+/* 倒计时必须用等宽 + tabular-nums，否则每秒重绘时数字宽度变化会抖 */
+.ttl .val { font-family: var(--ff-mono-user); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.ttl.is-persist { color: var(--fg-2); }
+.ttl.is-persist .val { font-family: var(--ff-ui-user); font-size: var(--fs-12); }
+.ttl.is-soon { color: var(--warn); background: var(--warn-weak); border-color: #f0dcbc; }
+.ttl.is-soon > svg, .ttl.is-soon .caret { color: var(--warn); }
+.ttl.is-gone { color: var(--brand); background: var(--brand-weak); border-color: var(--brand-bd); }
+.ttl.is-gone > svg, .ttl.is-gone .caret { color: var(--brand); }
+.ttl:disabled { opacity: .55; box-shadow: none; }
+
+/* ── 子标签 ─────────────────────────────────────────────── */
+.subtabs { height: 30px; flex: none; display: flex; align-items: stretch; gap: 2px; padding: 0 10px;
+           border-bottom: 1px solid var(--bd); background: var(--bg-app); }
+.subtab { display: inline-flex; align-items: center; gap: 6px; padding: 0 9px; font-size: var(--fs-11);
+          color: var(--fg-3); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.subtab:hover { color: var(--fg-2); }
+.subtab.is-active { color: var(--fg); font-weight: 500; border-bottom-color: var(--fg); }
+
+/* ── 空状态 ─────────────────────────────────────────────── */
+/* 不要叫 .empty：这种泛化名字会和任何"空的"元素撞车 —— 原型里
+   .empty { flex: 1 } 曾经吃掉树行的箭头占位符，把 key 名顶到最右侧。 */
+.emptystate { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center;
+              justify-content: center; padding: 40px; text-align: center; }
+.emptystate-mark { width: 44px; height: 44px; border-radius: 12px;
+              background: linear-gradient(145deg, #e8574a, #c22a1e);
+              box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 6px 18px rgba(198,42,30,.28); }
+.emptystate h3 { margin-top: 16px; font-size: var(--fs-16); font-weight: 600; letter-spacing: -.25px; }
+.emptystate p { margin-top: 5px; font-size: var(--fs-12); color: var(--fg-3); }
+.recent { margin-top: 26px; width: 456px; max-width: 100%; text-align: left; }
+.recent .cap { font-size: var(--fs-10); font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+               color: var(--fg-4); padding: 0 8px 6px; }
+.recent li { display: flex; }
+.recent li > button { height: 30px; flex: 1; display: flex; align-items: center; gap: 8px; padding: 0 8px;
+             border-radius: var(--r-6); font-size: var(--fs-12); min-width: 0; }
+.recent li > button:hover { background: var(--bg-hover); }
+.recent .when { margin-left: auto; font-size: var(--fs-10); color: var(--fg-4); flex: none; }
+.hintbar { margin-top: 28px; display: flex; align-items: center; gap: 16px; font-size: var(--fs-11); color: var(--fg-3); }
+.hintbar span { display: inline-flex; align-items: center; gap: 5px; }
+
+/* 小型内联空状态：给表格、抽屉、终端这类容器内部用，不抢整屏 */
+.emptyline { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center;
+             justify-content: center; gap: 6px; padding: 24px; color: var(--fg-3); font-size: var(--fs-12); }

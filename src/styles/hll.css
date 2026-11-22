@@ -1,0 +1,99 @@
+/* ── HyperLogLog 查看器 ──────────────────────────────────
+   仪表盘 + 结构查看器。结构查看器在健康态是底部抽屉、在回退态顶到主体，
+   同一块 DOM 靠 .is-main 切换 ——「校验失败」不是孤立页面，是降级档位。
+   视觉规格见 doc/fe_ref/07-hyperloglog.html。 */
+
+.hllboard { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 6px; padding: 16px 24px; overflow: auto; }
+.hb-cap { font-size: var(--fs-11); color: var(--fg-3); letter-spacing: .04em; }
+.hb-num { font-family: var(--ff-mono-user); font-size: var(--fs-32); font-weight: 600;
+          letter-spacing: -.5px; color: var(--fg); line-height: 1.15;
+          font-variant-numeric: tabular-nums; }
+.hb-err { font-size: var(--fs-11); color: var(--fg-3); font-variant-numeric: tabular-nums; }
+.hb-note { display: flex; gap: 8px; align-items: flex-start; max-width: 460px; margin-top: 14px;
+           padding: 10px 12px; border: 1px solid var(--bd); border-radius: var(--r-8);
+           background: var(--bg-subtle); font-size: var(--fs-11); line-height: 1.7;
+           color: var(--fg-2); }
+.hb-note svg { flex: none; margin-top: 3px; color: var(--fg-3); }
+.hb-note code { font-family: var(--ff-mono-user); font-size: var(--fs-10);
+                background: var(--bg-inset); padding: 1px 4px; border-radius: 3px; }
+
+/* PFADD 输入占工具条左侧，与 Hash/Set 的「添加」同位 */
+.hll-add { flex: 1; max-width: 280px; }
+.hll-add .input { width: 100%; }
+
+/* ── 结构查看器（抽屉 / 主体两种排布）───────────────────── */
+.hlldrawer { height: 336px; }
+.hlldrawer.is-main { flex: 1; height: auto; min-height: 0; margin-top: 10px; border-top: 1px solid var(--bd); }
+.hllstruct { display: flex; flex-direction: column; }
+
+/* 解析视图：左头部、右寄存器区 */
+.hxp { flex: 1; min-height: 0; display: flex; gap: 24px; padding: 12px 14px;
+       overflow: auto; background: #fff; }
+.hx-sec { min-width: 0; }
+.hx-sec.hx-header { flex: none; }
+.hx-cap { font-size: var(--fs-10); font-weight: 600; letter-spacing: .05em;
+          color: var(--fg-4); margin-bottom: 7px; }
+.hx-line { font-family: var(--ff-mono-user); font-size: var(--fs-11); margin-bottom: 9px;
+           white-space: nowrap; font-variant-numeric: tabular-nums; }
+.hx-dim { color: var(--fg-4); }
+
+/* 字段染色：hex 底色与字段表色块同色对照 */
+.hxf { padding: 1px 3px; border-radius: 3px; }
+.hxf-magic { background: var(--hx-magic-bg); color: var(--hx-magic); }
+.hxf-enc   { background: var(--hx-enc-bg);   color: var(--hx-enc); }
+.hxf-resv  { background: var(--hx-resv-bg);  color: var(--hx-resv); }
+.hxf-card  { background: var(--hx-card-bg);  color: var(--hx-card); }
+.swb { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+.sw-magic { background: var(--hx-magic-bg); }
+.sw-enc   { background: var(--hx-enc-bg); }
+.sw-resv  { background: var(--hx-resv-bg); }
+.sw-card  { background: var(--hx-card-bg); }
+
+.hxt { border-collapse: collapse; font-size: var(--fs-11); }
+.hxt td { padding: 4px 12px 4px 0; border-bottom: 1px solid var(--bd); vertical-align: top; }
+.hxt tr:last-child td { border-bottom: 0; }
+.hxt td.f { color: var(--fg-2); white-space: nowrap; }
+.hxt td.b { font-family: var(--ff-mono-user); font-size: var(--fs-11); color: var(--fg-3);
+            white-space: nowrap; }
+.hxt td.v { font-family: var(--ff-mono-user); font-size: var(--fs-11);
+            font-variant-numeric: tabular-nums; }
+
+/* 寄存器热力图：128×128 canvas 放大到 192px，像素边界保留。
+   缺失段（截断的 dense）在 canvas 里是透明的，斜纹底透出来。 */
+.hx-reg { display: flex; gap: 16px; align-items: flex-start; }
+.hmwrap { flex: none; border: 1px solid var(--bd); line-height: 0;
+          background: repeating-linear-gradient(45deg,
+            var(--hx-miss-a), var(--hx-miss-a) 4px, var(--hx-miss-b) 4px, var(--hx-miss-b) 8px); }
+.hm { width: 192px; height: 192px; image-rendering: pixelated; display: block; }
+.hx-stats { font-size: var(--fs-11); color: var(--fg-2); line-height: 1.9; }
+.hx-stats b { font-weight: 500; color: var(--fg); }
+
+/* 6-bit 跨界示意：3 字节 ↔ 4 寄存器 */
+.bitwrap { margin-top: 10px; line-height: 1.6; }
+.bs-row { display: flex; font-size: var(--fs-10); color: var(--fg-4);
+          font-family: var(--ff-mono-user); }
+.bs-row span { width: 56px; text-align: center; flex: none; }
+.bs-row.regs span { width: 42px; }
+.bitstrip { display: flex; margin: 3px 0 2px; }
+.bitstrip i { width: 7px; height: 12px; }
+.bitstrip i.r0 { background: var(--hx-bit-0); }
+.bitstrip i.r1 { background: var(--hx-bit-1); }
+.bitstrip i.r2 { background: var(--hx-bit-2); }
+.bitstrip i.r3 { background: var(--hx-bit-3); }
+.bitstrip i.b8 { box-shadow: inset 1.5px 0 0 var(--fg-3); }
+
+/* 原始视图：hex + ASCII 平铺，只读 */
+.hxraw { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: auto;
+         background: #fff; padding: 10px 14px; font-family: var(--ff-mono-user);
+         font-size: var(--fs-12); line-height: 20px; font-variant-numeric: tabular-nums; }
+/* 首行的字段染色只改背景不改步进：水平 padding 会把等宽网格撑歪，列就对不上正文 */
+.hxraw .hxf { padding: 0; border-radius: 2px; }
+.hxrow { white-space: pre; display: flex; gap: 16px; flex: none; }
+.hxrow .off { color: var(--fg-4); }
+.hxrow .asc { color: var(--fg-4); }
+
+/* 底部状态行：PFCOUNT 的副作用与「不提供保存」都写在这里 */
+.hll-status { height: 30px; flex: none; display: flex; align-items: center; gap: 8px;
+              padding: 0 10px; border-top: 1px solid var(--bd); background: var(--bg-subtle);
+              font-size: var(--fs-11); color: var(--fg-3); }

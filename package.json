@@ -1,0 +1,53 @@
+{
+  "name": "tsubasa-redis-manager",
+  "private": true,
+  "version": "0.1.0",
+  "description": "An independently implemented Vue 3 and Tauri desktop manager for Redis",
+  "author": "AoShizuku",
+  "license": "MIT",
+  "homepage": "https://github.com/AoShizuku/TsubasaRedisManager",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AoShizuku/TsubasaRedisManager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AoShizuku/TsubasaRedisManager/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "test": "vitest run",
+    "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
+    "lint:rust": "cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --all-features -- -D warnings",
+    "check": "npm run build && npm test && npm run lint:rust && npm run test:rust"
+  },
+  "dependencies": {
+    "@tanstack/vue-virtual": "^3.13.34",
+    "@tauri-apps/api": "^2.11.1",
+    "lucide-vue-next": "^0.577.0",
+    "monaco-editor": "^0.56.0",
+    "pinia": "^4.0.2",
+    "reka-ui": "^2.10.1",
+    "vue": "^3.5.39"
+  },
+  "devDependencies": {
+    "@msgpack/msgpack": "^3.1.3",
+    "@tauri-apps/cli": "^2.11.4",
+    "@types/node": "^24.13.2",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vue/tsconfig": "^0.9.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1",
+    "vitest": "^4.1.10",
+    "vue-tsc": "^3.3.5"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10.0.0"
+  }
+}

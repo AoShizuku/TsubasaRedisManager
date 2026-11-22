@@ -71,8 +71,11 @@ jobs:
           node-version: 22
           cache: npm
 
+      # 版本与组件取自仓库根的 rust-toolchain.toml，CI 与本地同版，clippy 不会因 stable 升级突然变红
       - name: 准备 Rust
-        uses: dtolnay/rust-toolchain@stable
+        run: |
+          rustup toolchain install
+          rustc --version
 
       - name: 缓存 Cargo
         uses: Swatinem/rust-cache@v2

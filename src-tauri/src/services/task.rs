@@ -2520,13 +2520,7 @@ pub fn normalize_scan_count(count: Option<usize>) -> usize {
 }
 
 pub fn normalize_scan_pattern(pattern: Option<String>) -> Option<String> {
-    pattern.and_then(|value| {
-        if value.trim().is_empty() {
-            None
-        } else {
-            Some(value)
-        }
-    })
+    pattern.filter(|value| !value.trim().is_empty())
 }
 
 fn pubsub_event_item(channel: &str, pattern: Option<&str>, message: &str) -> TaskEventItem {
@@ -2641,9 +2635,9 @@ fn decode_hex(value: &str, message: &str) -> AppResult<Vec<u8>> {
         return Err(AppError::TaskInvalidRequest(message.into()));
     }
     let mut decoded = Vec::with_capacity(bytes.len() / 2);
-    for chunk in bytes.chunks_exact(2) {
-        let high = decode_hex_nibble(chunk[0], message)?;
-        let low = decode_hex_nibble(chunk[1], message)?;
+    for [high, low] in bytes.as_chunks::<2>().0 {
+        let high = decode_hex_nibble(*high, message)?;
+        let low = decode_hex_nibble(*low, message)?;
         decoded.push((high << 4) | low);
     }
     Ok(decoded)

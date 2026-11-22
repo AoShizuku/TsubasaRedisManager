@@ -13,7 +13,7 @@
 
 ## 开发环境
 
-需要 Node.js 22、Rust stable 与 [Tauri v2 的系统依赖](https://v2.tauri.app/start/prerequisites/)。
+需要 Node.js 22、rustup（Rust 版本由 `rust-toolchain.toml` 钉住，自动安装）与 [Tauri v2 的系统依赖](https://v2.tauri.app/start/prerequisites/)。
 目前只在 Windows 上开发与测试。
 
 ```powershell

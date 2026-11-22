@@ -35,7 +35,7 @@
 
 ## 构建
 
-需要 Node.js 22 与 Rust stable，以及 [Tauri v2 的系统依赖](https://v2.tauri.app/start/prerequisites/)。
+需要 Node.js 22、rustup（Rust 版本由 `rust-toolchain.toml` 钉住，自动安装），以及 [Tauri v2 的系统依赖](https://v2.tauri.app/start/prerequisites/)。
 
 ```powershell
 npm ci

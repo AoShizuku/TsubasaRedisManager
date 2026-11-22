@@ -1,0 +1,5 @@
+# CI 与本地用同一版 Rust：stable 一升级就会带来新的 clippy lint，
+# 而 CI 开着 -D warnings，不钉版本 CI 会在代码没动的情况下变红。升级时改这里并一起修新 lint。
+[toolchain]
+channel = "1.100.0"
+components = ["rustfmt", "clippy"]

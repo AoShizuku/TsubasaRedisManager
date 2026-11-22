@@ -1,6 +1,6 @@
 # 开发
 
-覆盖：`package.json` 脚本、`scripts/dev/`、`src-tauri/tests/`、各处 `*.test.ts`、`.github/workflows/`、`CHANGELOG.md`
+覆盖：`package.json` 脚本、`scripts/dev/`、`src-tauri/tests/`、各处 `*.test.ts`、`.github/workflows/`、`rust-toolchain.toml`、`CHANGELOG.md`
 
 ## 常用命令
 
@@ -61,6 +61,8 @@ ACL 场景的用户由测试自己用 `ACL SETUSER … reset` 建、用完删。
 ## CI 与发布
 
 - **CI**（`.github/workflows/ci.yml`）：推送与 PR 在 `windows-latest` 上分步跑 `npm run check` 的四段。
+  Rust 版本由仓库根的 `rust-toolchain.toml` 钉住，本地与 CI 同版：clippy 开着 `-D warnings`，
+  跟随 stable 的话，新版本带来的新 lint 会让没改过的代码突然变红。升级时改这个文件并一起修新 lint。
   不跑 e2e——e2e 要 Docker 起一组 Redis，合回 main 前在本地跑。
 - **发布**（`.github/workflows/release.yml`）：在 main 上推 `v*` tag 触发。guard 校验 tag 落在 main 上、
   且与 `package.json`、`src-tauri/Cargo.toml`、`src-tauri/tauri.conf.json` 三处版本号一致，

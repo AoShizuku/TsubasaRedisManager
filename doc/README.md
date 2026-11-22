@@ -24,7 +24,7 @@
 | 代码路径 | 文档 |
 |---|---|
 | `src/`、`src-tauri/src/` 的目录划分与跨层边界 | [architecture](architecture.md) |
-| `package.json` 脚本、`scripts/dev/`、`.github/workflows/`、三处版本号（`package.json`、`src-tauri/Cargo.toml`、`src-tauri/tauri.conf.json`） | [development](development.md) |
+| `package.json` 脚本、`scripts/dev/`、`.github/workflows/`、`rust-toolchain.toml`、三处版本号（`package.json`、`src-tauri/Cargo.toml`、`src-tauri/tauri.conf.json`） | [development](development.md) |
 | `src/components/sidebar/KeyTree.vue`、`src/components/sidebar/sidebarRows.ts`、`src/components/ui/VirtualTable.vue`、`src/lib/monaco.ts`、`src/lib/monacoLoader.ts`、`src/components/stream/useTaskStream.ts` | [architecture](architecture.md)「性能敏感区」 |
 | `src-tauri/src/commands/`、`src-tauri/src/services/values.rs`、`src-tauri/src/services/redis_values.rs`、`src-tauri/src/models.rs` | [backend/ipc-contract](backend/ipc-contract.md) |
 | `src/api/`、`src/types/ipc.ts`、`src/lib/redisText.ts` | [backend/ipc-contract](backend/ipc-contract.md) |
